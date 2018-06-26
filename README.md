@@ -9,11 +9,11 @@ Complete automation is due to the existence of false positives.
 The wildcard feature is currently under study.
 
 ### [ YaraGenerator ]
-<img src="images/YaraGenerator.png" width="75%">
+<img src="images/YaraGenerator.png" width="100%">
 
 ### [ YaraChecker ]
-<img src="images/YaraChecker_1.png" width="75%">
-<img src="images/YaraChecker_2.png" width="75%">
+<img src="images/YaraChecker_1.png" width="100%">
+<img src="images/YaraChecker_2.png" width="100%">
 
 ### Install & Tutorial
 

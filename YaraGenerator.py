@@ -69,6 +69,31 @@ class YaraHighlighter(QSyntaxHighlighter):
 class YaraIcon(PluginForm):
     def OnCreate(self, form):
         self.parent = self.FormToPyQtWidget(form)
+        self.pe = pefile.PE(GetInputFilePath())
+        self.EntryPoint = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
+        self.ImageBase = self.pe.OPTIONAL_HEADER.ImageBase
+        self.section_list = {}
+
+        for section in self.pe.sections:
+            self.section_list[section.Name.decode("utf-8").replace("\x00","")] = [hex(section.VirtualAddress), hex(section.SizeOfRawData), hex(section.PointerToRawData)]
+
+        for entry in self.pe.DIRECTORY_ENTRY_RESOURCE.entries:
+            resource_type = entry.name
+            if resource_type is None:
+                resource_type = pefile.RESOURCE_TYPE.get(entry.struct.Id)
+
+            for directory in entry.directory.entries:
+                for resource in directory.directory.entries:
+                    name = str(resource_type)
+                    if name in "RT_ICON":
+                        name = str(resource_type)
+                        offset = resource.data.struct.OffsetToData
+                        size = resource.data.struct.Size
+                        RVA_ = int(self.section_list['.rsrc'][0],16) - int(self.section_list['.rsrc'][2],16)
+                        print(name, hex(offset), hex(size))
+
+                        real_offset = hex(offset - RVA_)
+                        print(hex(offset), real_offset)
 
     def OnClose(self, form):
         pass
@@ -364,7 +389,7 @@ class YaraGenerator(PluginForm):
 
     def YaraIcon(self):
         self.YaraIcon = YaraIcon()
-        self.YaraIcon.Show("Yara Icon")
+        self.YaraIcon.Show("YaraIcon")
 
     def OnCreate(self, form):
         self.parent = self.FormToPyQtWidget(form)

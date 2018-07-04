@@ -9,6 +9,7 @@ import yara
 import binascii
 import time
 import re
+import pefile
 
 class YaraHighlighter(QSyntaxHighlighter):
     def __init__(self, document):
@@ -64,6 +65,13 @@ class YaraHighlighter(QSyntaxHighlighter):
                 index = expression.indexIn(text, index + length)
 
         self.setCurrentBlockState(0)
+
+class YaraIcon(PluginForm):
+    def OnCreate(self, form):
+        self.parent = self.FormToPyQtWidget(form)
+
+    def OnClose(self, form):
+        pass
 
 class YaraChecker(PluginForm):
     def choose_path(self):
@@ -354,6 +362,10 @@ class YaraGenerator(PluginForm):
         self.YaraChecker.data = self.TextEdit1.toPlainText()
         self.YaraChecker.Show("YaraChecker")
 
+    def YaraIcon(self):
+        self.YaraIcon = YaraIcon()
+        self.YaraIcon.Show("Yara Icon")
+
     def OnCreate(self, form):
         self.parent = self.FormToPyQtWidget(form)
         self.ruleset_list = {}
@@ -379,6 +391,8 @@ class YaraGenerator(PluginForm):
         self.YaraExportButton.clicked.connect(self.YaraExport)
         self.YaraCheckerButton = QPushButton("Yara Checker")
         self.YaraCheckerButton.clicked.connect(self.YaraChecker)
+        self.YaraIconButton = QPushButton("Yara Icon")
+        self.YaraIconButton.clicked.connect(self.YaraIcon)
 
         self.layout = QVBoxLayout()
 
@@ -406,6 +420,7 @@ class YaraGenerator(PluginForm):
         GL3.addWidget(self.DeleteButton, 0, 2)
         GL3.addWidget(self.YaraExportButton, 0, 3)
         GL3.addWidget(self.YaraCheckerButton, 0, 4)
+        GL3.addWidget(self.YaraIconButton, 0, 5)
         self.layout.addLayout(GL3)
 
         self.tableWidget = QTableWidget()

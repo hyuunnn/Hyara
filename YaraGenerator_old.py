@@ -1,11 +1,10 @@
 from idaapi import PluginForm
 from PyQt5.QtWidgets import QCheckBox, QTableWidgetItem, QFileDialog, QTableWidget, QLineEdit, QPlainTextEdit, QPushButton, QLabel, QVBoxLayout, QGridLayout
-from PyQt5.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter, QPixmap
+from PyQt5.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter, QPixmap, QIcon
 from PyQt5.QtCore import QRegExp, Qt
 from os.path import expanduser
 from PIL.ImageQt import ImageQt
 from PIL import Image
-from functools import partial
 
 import os
 import yara
@@ -14,10 +13,6 @@ import time
 import re
 import pefile
 import io
-
-ruleset_list = {}
-tableWidget = QTableWidget()
-layout = QVBoxLayout()
 
 class YaraHighlighter(QSyntaxHighlighter):
     def __init__(self, document):
@@ -75,20 +70,6 @@ class YaraHighlighter(QSyntaxHighlighter):
         self.setCurrentBlockState(0)
 
 class YaraIcon(PluginForm):
-    def SaveIcon(self, idx):
-        global ruleset_list, tableWidget, layout
-        data_ = self.img[idx][int(self.LineEdit1.text(),16):int(self.LineEdit1.text(),16) + int(self.LineEdit2.text(),10)]
-        ruleset_list[self.LineEdit3.text()] = ["{" + binascii.hexlify(data_) + "}", hex(int(self.LineEdit1.text(),16)), hex(int(self.LineEdit1.text(),16) + int(self.LineEdit2.text(),10))]
-        tableWidget.setRowCount(len(ruleset_list.keys()))
-        tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
-        for idx, name in enumerate(ruleset_list.keys()):
-            tableWidget.setItem(idx, 0, QTableWidgetItem(name))
-            tableWidget.setItem(idx, 1, QTableWidgetItem(ruleset_list[name][0]))
-            tableWidget.setItem(idx, 2, QTableWidgetItem(ruleset_list[name][1]))
-            tableWidget.setItem(idx, 3, QTableWidgetItem(ruleset_list[name][2]))
-        layout.addWidget(tableWidget)
-
     def YaraMaker(self):
         for idx in range(len(self.img)):
             data_ = self.img[idx][int(self.LineEdit1.text(),16):int(self.LineEdit1.text(),16) + int(self.LineEdit2.text(),10)]
@@ -159,7 +140,7 @@ class YaraIcon(PluginForm):
             # https://stackoverflow.com/questions/32908639/open-pil-image-from-byte-file
             image2 = Image.open(io.BytesIO(i))
             qimage = ImageQt(image2)
-            pixmap = QPixmap.fromImage(qimage)
+            pixmap = QtGui.QPixmap.fromImage(qimage)
 
             self.img_label.append(QLabel())
             self.img_label[idx].setPixmap(pixmap)
@@ -169,7 +150,6 @@ class YaraIcon(PluginForm):
             GL1.addWidget(self.LineEdit_list[idx], idx, 1)
 
             self.PushButton_list.append(QPushButton("Save Icon rule"))
-            self.PushButton_list[idx].clicked.connect(partial(self.SaveIcon,idx))
             GL1.addWidget(self.PushButton_list[idx], idx, 2)
 
         self.layout.addLayout(GL1)
@@ -255,7 +235,6 @@ class YaraChecker(PluginForm):
 
 class YaraGenerator(PluginForm):
     def YaraExport(self):
-        global ruleset_list
         info = idaapi.get_inf_structure()
         if info.is_64bit():
             md = Cs(CS_ARCH_X86, CS_MODE_64)
@@ -269,8 +248,8 @@ class YaraGenerator(PluginForm):
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
         result += "  strings:\n"
-        for name in ruleset_list.keys():
-            CODE = bytearray.fromhex(ruleset_list[name][0][1:-1].strip().replace("\\x"," "))
+        for name in self.ruleset_list.keys():
+            CODE = bytearray.fromhex(self.ruleset_list[name][0][1:-1].strip().replace("\\x"," "))
             if self.CheckBox1.isChecked():
                 result += "      /*\n"
                 for i in md.disasm(CODE, 0x1000):
@@ -283,7 +262,7 @@ class YaraGenerator(PluginForm):
             # http://ref.x86asm.net/coder32.html
             if self.CheckBox2.isChecked(): # yara wildcard isChecked()
                 opcode = []
-                CODE = bytearray.fromhex(ruleset_list[name][0][1:-1].strip().replace("\\x"," "))
+                CODE = bytearray.fromhex(self.ruleset_list[name][0][1:-1].strip().replace("\\x"," "))
                 for i in md.disasm(CODE, 0x1000):
                     byte_data = "".join('{:02x}'.format(x) for x in i.bytes)
 
@@ -408,7 +387,7 @@ class YaraGenerator(PluginForm):
 
                 result += "      $" + name + " = {" + ''.join(opcode) + "}\n"
             else:
-                result += "      $" + name + " = " + ruleset_list[name][0]+"\n"
+                result += "      $" + name + " = " + self.ruleset_list[name][0]+"\n"
         result += "  condition:\n"
         result += "      all of them\n"
         result += "}"
@@ -416,18 +395,17 @@ class YaraGenerator(PluginForm):
         self.TextEdit1.insertPlainText(result)
 
     def DeleteRule(self):
-        global ruleset_list, tableWidget, layout
         if idaapi.ask_yn(idaapi.ASKBTN_NO, "Delete Yara Rule"):
-            ruleset_list = {}
-        tableWidget.setRowCount(len(ruleset_list.keys()))
-        tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
-        for idx, name in enumerate(ruleset_list.keys()):
-            tableWidget.setItem(idx, 0, QTableWidgetItem(name))
-            tableWidget.setItem(idx, 1, QTableWidgetItem(ruleset_list[name][0]))
-            tableWidget.setItem(idx, 2, QTableWidgetItem(ruleset_list[name][1]))
-            tableWidget.setItem(idx, 3, QTableWidgetItem(ruleset_list[name][2]))
-        layout.addWidget(tableWidget)
+            self.ruleset_list = {}
+        self.tableWidget.setRowCount(len(self.ruleset_list.keys()))
+        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        for idx, name in enumerate(self.ruleset_list.keys()):
+            self.tableWidget.setItem(idx, 0, QTableWidgetItem(name))
+            self.tableWidget.setItem(idx, 1, QTableWidgetItem(self.ruleset_list[name][0]))
+            self.tableWidget.setItem(idx, 2, QTableWidgetItem(self.ruleset_list[name][1]))
+            self.tableWidget.setItem(idx, 3, QTableWidgetItem(self.ruleset_list[name][2]))
+        self.layout.addWidget(self.tableWidget)
 
     def MakeRule(self):
         ByteCode = []
@@ -444,7 +422,6 @@ class YaraGenerator(PluginForm):
         self.TextEdit1.insertPlainText("{" + ''.join(ByteCode) + "}")
 
     def SaveRule(self):
-        global ruleset_list, tableWidget, layout
         #info = idaapi.get_inf_structure()
         #if info.is_64bit():
         #    md = Cs(CS_ARCH_X86, CS_MODE_64)
@@ -454,16 +431,16 @@ class YaraGenerator(PluginForm):
         #for i in md.disasm(CODE, 0x1000):
         #    print("0x%x:\t%s\t%s" %(i.address, i.mnemonic, i.op_str))
 
-        ruleset_list[self.Variable_name.text()] = [self.TextEdit1.toPlainText(), self.StartAddress.text(), self.EndAddress.text()]
-        tableWidget.setRowCount(len(ruleset_list.keys()))
-        tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
-        for idx, name in enumerate(ruleset_list.keys()):
-            tableWidget.setItem(idx, 0, QTableWidgetItem(name))
-            tableWidget.setItem(idx, 1, QTableWidgetItem(ruleset_list[name][0]))
-            tableWidget.setItem(idx, 2, QTableWidgetItem(ruleset_list[name][1]))
-            tableWidget.setItem(idx, 3, QTableWidgetItem(ruleset_list[name][2]))
-        layout.addWidget(tableWidget)
+        self.ruleset_list[self.Variable_name.text()] = [self.TextEdit1.toPlainText(), self.StartAddress.text(), self.EndAddress.text()]
+        self.tableWidget.setRowCount(len(self.ruleset_list.keys()))
+        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        for idx, name in enumerate(self.ruleset_list.keys()):
+            self.tableWidget.setItem(idx, 0, QTableWidgetItem(name))
+            self.tableWidget.setItem(idx, 1, QTableWidgetItem(self.ruleset_list[name][0]))
+            self.tableWidget.setItem(idx, 2, QTableWidgetItem(self.ruleset_list[name][1]))
+            self.tableWidget.setItem(idx, 3, QTableWidgetItem(self.ruleset_list[name][2]))
+        self.layout.addWidget(self.tableWidget)
 
     def YaraChecker(self):
         self.YaraChecker = YaraChecker()
@@ -475,8 +452,8 @@ class YaraGenerator(PluginForm):
         self.YaraIcon.Show("YaraIcon")
 
     def OnCreate(self, form):
-        global tableWidget, layout
         self.parent = self.FormToPyQtWidget(form)
+        self.ruleset_list = {}
         self.label1 = QLabel("Variable name : ")
         self.label_1 = QLabel("comment option")
         self.CheckBox1 = QCheckBox()
@@ -502,6 +479,8 @@ class YaraGenerator(PluginForm):
         self.YaraIconButton = QPushButton("Yara Icon")
         self.YaraIconButton.clicked.connect(self.YaraIcon)
 
+        self.layout = QVBoxLayout()
+
         GL1 = QGridLayout()
         GL1.addWidget(self.label1, 0, 0)
         GL1.addWidget(self.Variable_name, 0, 1)
@@ -509,16 +488,16 @@ class YaraGenerator(PluginForm):
         GL1.addWidget(self.CheckBox1, 0, 3)
         GL1.addWidget(self.label_2 , 0, 4)
         GL1.addWidget(self.CheckBox2, 0, 5)
-        layout.addLayout(GL1)
+        self.layout.addLayout(GL1)
 
         GL2 = QGridLayout()
         GL2.addWidget(self.label2, 0, 1)
         GL2.addWidget(self.StartAddress, 0, 2)
         GL2.addWidget(self.label3, 0, 3)
         GL2.addWidget(self.EndAddress, 0, 4)
-        layout.addLayout(GL2)
+        self.layout.addLayout(GL2)
 
-        layout.addWidget(self.TextEdit1)
+        self.layout.addWidget(self.TextEdit1)
 
         GL3 = QGridLayout()
         GL3.addWidget(self.MakeButton, 0, 0)
@@ -527,14 +506,15 @@ class YaraGenerator(PluginForm):
         GL3.addWidget(self.YaraExportButton, 0, 3)
         GL3.addWidget(self.YaraCheckerButton, 0, 4)
         GL3.addWidget(self.YaraIconButton, 0, 5)
-        layout.addLayout(GL3)
+        self.layout.addLayout(GL3)
 
-        tableWidget.setRowCount(0)
-        tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
-        layout.addWidget(tableWidget)
+        self.tableWidget = QTableWidget()
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        self.layout.addWidget(self.tableWidget)
 
-        self.parent.setLayout(layout)
+        self.parent.setLayout(self.layout)
 
     def OnClose(self, form):
         pass

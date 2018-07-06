@@ -15,6 +15,9 @@ The wildcard feature is currently under study.
 <img src="images/YaraChecker_1.png" width="100%">
 <img src="images/YaraChecker_2.png" width="100%">
 
+### [ YaraIcon ]
+<img src="images/YaraIcon.png" width="100%">
+
 ### Install & Tutorial
 
 pip install yara-python

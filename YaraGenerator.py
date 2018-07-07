@@ -280,7 +280,7 @@ class YaraGenerator(PluginForm):
         result = ""
         result += "rule " + self.Variable_name.text() + "\n{\n"
         result += "  meta:\n"
-        result += "      tool = \"https://github.com/hy00un/ida_python_scripts/blob/master/YaraGenerator.py\"\n"
+        result += "      tool = \"https://github.com/hy00un/YaraGenerator\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
         result += "  strings:\n"

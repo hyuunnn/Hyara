@@ -107,6 +107,16 @@ class YaraIcon(PluginForm):
         self.label1 = QLabel("Start Offset : ")
         self.label2 = QLabel("Length : ")
         self.label3 = QLabel("Variable name : ")
+        self.label4 = QLabel("Icon Size")
+        icon1 = QLabel("Icon")
+        icon1.setAlignment(Qt.AlignCenter)
+        icon2 = QLabel("Icon Size")
+        icon2.setAlignment(Qt.AlignCenter)
+        icon3 = QLabel("Rule")
+        icon3.setAlignment(Qt.AlignCenter)
+        icon4 = QLabel("Save Rule")
+        icon4.setAlignment(Qt.AlignCenter)
+
         self.LineEdit1 = QLineEdit()
         self.LineEdit2 = QLineEdit()
         self.LineEdit3 = QLineEdit()
@@ -154,6 +164,10 @@ class YaraIcon(PluginForm):
         self.layout.addLayout(GL0)
 
         GL1 = QGridLayout()
+        GL1.addWidget(icon1, 0, 0)
+        GL1.addWidget(icon2, 0, 1)
+        GL1.addWidget(icon3, 0, 2)
+        GL1.addWidget(icon4, 0, 3)
         for idx,i in enumerate(self.img):
             # https://stackoverflow.com/questions/35655755/qpixmap-argument-1-has-unexpected-type-pngimagefile?rq=1
             # https://stackoverflow.com/questions/32908639/open-pil-image-from-byte-file
@@ -163,14 +177,15 @@ class YaraIcon(PluginForm):
 
             self.img_label.append(QLabel())
             self.img_label[idx].setPixmap(pixmap)
-            GL1.addWidget(self.img_label[idx], idx, 0)
+            GL1.addWidget(self.img_label[idx], idx+1, 0)
+            GL1.addWidget(QLabel(hex(len(i))),idx+1, 1)
 
             self.LineEdit_list.append(QLineEdit())
-            GL1.addWidget(self.LineEdit_list[idx], idx, 1)
+            GL1.addWidget(self.LineEdit_list[idx], idx+1, 2)
 
-            self.PushButton_list.append(QPushButton("Save Icon rule"))
+            self.PushButton_list.append(QPushButton("Enter"))
             self.PushButton_list[idx].clicked.connect(partial(self.SaveIcon,idx))
-            GL1.addWidget(self.PushButton_list[idx], idx, 2)
+            GL1.addWidget(self.PushButton_list[idx], idx+1, 3)
 
         self.layout.addLayout(GL1)
         self.parent.setLayout(self.layout)

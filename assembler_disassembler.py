@@ -104,7 +104,7 @@ class assem_Tool(idaapi.plugin_t):
     comment = "assembler & disassembler"
     help = "help"
     wanted_name = "assembler & disassembler"
-    wanted_hotkey = "Ctrl+A"
+    wanted_hotkey = "Ctrl+Shift+A"
 
     def init(self):
         idaapi.msg("assembler_disassembler")

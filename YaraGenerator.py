@@ -559,7 +559,7 @@ class YaraPlugin(idaapi.plugin_t):
     comment = "This is YaraGenerator"
     help = "help"
     wanted_name = "Yara_Generator"
-    wanted_hotkey = "Ctrl+Y"
+    wanted_hotkey = "Ctrl+Shift+Y"
 
     def init(self):
         idaapi.msg("YaraGenerator\n")

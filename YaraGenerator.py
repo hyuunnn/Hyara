@@ -419,6 +419,13 @@ class YaraGenerator(PluginForm):
                             opcode.append(byte_data[:2]+"??")
                     else:
                         opcode.append(byte_data)
+                    
+                    elif i.mnemonic = "xchg":
+                        if re.compile("9[1-7]").match(byte_data):
+                            opcode.append(byte_data[:1]+"?")
+                        elif re.compile("8[6-7]").match(byte_data):
+                            opcode.append(byte_Data[:2]+ "[1-6]")
+
 
                 try:
                     if ''.join(opcode)[-1] == "]": # syntax error, unexpected '}', expecting _BYTE_ or _MASKED_BYTE_ or '(' or '['

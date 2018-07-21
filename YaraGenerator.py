@@ -303,7 +303,7 @@ class YaraGenerator(PluginForm):
                 for i in md.disasm(CODE, 0x1000):
                     byte_data = "".join('{:02x}'.format(x) for x in i.bytes)
 
-                    if byte_data.startswith("ff"): # ex) ff d7 -> call edi, 8b 3d a8 e1 40 00 -> mov edi, ds:GetDlgItem
+                    if byte_data.startswith("ff"): # ex) ff d7 -> call edi
                         opcode.append("ff[1-5]")
 
                     elif byte_data.startswith("0f"): # ex) 0f 84 bb 00 00 00 -> jz loc_40112A, 0f b6 0b -> movzx cx, byte ptr [ebx]
@@ -329,8 +329,10 @@ class YaraGenerator(PluginForm):
                             opcode.append(byte_data[:2]+"[4]")
                         elif re.compile("b[0-7]").match(byte_data): # ex) b7 60 -> mov bh, 0x60
                             opcode.append("b?"+byte_data[2:])
-                        elif re.compile("8[8-9a-c]|8e|c[6-7]").match(byte_data):
-                            opcode.append(byte_data[:2]+"[1-8]") # ex) 8b 5c 24 14 -> mob ebx, [esp+10+ThreadParameter], 8b f0 -> mov esi, eax , c7 44 24 1c 00 00 00 00 -> mov [esp+338+var_31c], 0
+                        elif re.compile("8[8-9a-c]|8e").match(byte_data): # ex) 8b 3d a8 e1 40 00 -> mov edi, ds:GetDlgItem
+                            opcode.append(byte_data[:2]+"[1-4]") # ex) 8b 5c 24 14 -> mob ebx, [esp+10+ThreadParameter] , 8b f0 -> mov esi, eax
+                        elif re.compile("c[6-7]").match(byte_data): # ex) c7 44 24 1c 00 00 00 00 -> mov [esp+338+var_31c], 0
+                            opcode.append(byte_data[:2]+"[2-8]")
                         elif re.compile("a[0-3]").match(byte_data):
                             opcode.append(byte_data[:2]+"[1-4]") # ex) a1 60 40 41 00 -> mov eax, __security_cookie
 
@@ -360,13 +362,15 @@ class YaraGenerator(PluginForm):
 
                     elif i.mnemonic == "call":
                         if re.compile("e8").match(byte_data):
-                            opcode.append("e8[1-8]") # call address(?? ?? ?? ??)
+                            opcode.append("e8[4]") # call address(?? ?? ?? ??)
 
                     elif i.mnemonic == "test":
                         if re.compile("8[4-5]|a8").match(byte_data): # ex) 84 ea -> test dl, ch
                             opcode.append(byte_data[:2]+"??") 
                         elif re.compile("a9").match(byte_data): # ex) a9 ea 00 00 00 -> test eax, 0xea
                             opcode.append("a9[4]")
+                        elif re.compile("f[6-7]").match(byte_data):
+                            opcode.append(byte_data[:2]+"[2-7]")
 
                     elif i.mnemonic == "and":
                         if re.compile("8[0-3]").match(byte_data):

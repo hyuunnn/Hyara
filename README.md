@@ -19,7 +19,7 @@ The wildcard feature is currently under study.
 <img src="images/YaraIcon.png" width="100%">
 
 ### [ string option ]
-Check .text section
+#### Check .text section
 <img src="images/string_option_1.png" width="100%">
 <img src="images/string_option_2.png" width="100%">
 

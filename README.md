@@ -22,7 +22,7 @@ The wildcard feature is currently under study.
 
 pip install yara-python
 
-pip install capstone-engine
+pip install capstone
 
 pip install keystone-engine
 

@@ -22,9 +22,9 @@ The wildcard feature is currently under study.
 
 pip install yara-python
 
-pip install capstone-engine
+pip install capstone or download module installer (https://www.capstone-engine.org/download.html)
 
-pip install keystone-engine
+pip install keystone-engine or download module installer (http://www.keystone-engine.org/download/)
 
 pip install pefile
 

@@ -26,11 +26,15 @@ pip install capstone-engine
 
 pip install keystone-engine
 
+pip install pefile
+
+pip install pillow
+
 copy YaraGenerator.py C:\Program Files\IDA 7.0\plugins
 
 copy assembler_disassembler.py C:\Program Files\IDA 7.0\plugins
 
-YaraGenerator HOT-KEY : Ctrl + Y
+YaraGenerator HOT-KEY : Ctrl + Shift + Y
 
-assembler_disassembler HOT-KEY: Ctrl + A
+assembler_disassembler HOT-KEY: Ctrl + Shift + A
 

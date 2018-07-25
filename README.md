@@ -19,7 +19,7 @@ The wildcard feature is currently under study.
 <img src="images/YaraIcon.png" width="100%">
 
 ### [ string option ]
-#### Check .text section
+### Check .text section
 <img src="images/string_option_1.png" width="100%">
 <img src="images/string_option_2.png" width="100%">
 
@@ -42,4 +42,10 @@ copy assembler_disassembler.py C:\Program Files\IDA 7.0\plugins
 YaraGenerator HOT-KEY : Ctrl + Shift + Y
 
 assembler_disassembler HOT-KEY: Ctrl + Shift + A
+
+### TODO
+* string option 사용 시 unicode일 경우 다르게 처리
+* 와일드 카드 처리 정교화
+* 
+
 

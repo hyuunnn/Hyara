@@ -18,6 +18,10 @@ The wildcard feature is currently under study.
 ### [ YaraIcon ]
 <img src="images/YaraIcon.png" width="100%">
 
+### [ string option ]
+<img src="images/string_option_1.png" width="100%">
+<img src="images/string_option_2.png" width="100%">
+
 ### Install & Tutorial
 
 pip install yara-python

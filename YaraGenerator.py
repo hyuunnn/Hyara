@@ -296,7 +296,7 @@ class Wrapper(IDAViewWrapper):
         from_mouse = False
 
         line = get_custom_viewer_curline(widget, from_mouse)
-        line = line[line.find(".text:")+len(".text:"):]
+        line = line[line.find(":")+len(":"):]
         line = binascii.hexlify(line).split("2002")[0]
         line = binascii.unhexlify(line)
         

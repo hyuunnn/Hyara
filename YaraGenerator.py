@@ -1,4 +1,4 @@
-from idaapi import PluginForm
+from idaapi import PluginForm, simplecustviewer_t
 from PIL import Image
 from PIL.ImageQt import ImageQt
 from PyQt5.QtCore import QRegExp, Qt
@@ -7,6 +7,9 @@ from PyQt5.QtGui import (QColor, QFont, QPixmap, QSyntaxHighlighter,
 from PyQt5.QtWidgets import (QCheckBox, QFileDialog, QGridLayout, QLabel,
                              QLineEdit, QPlainTextEdit, QPushButton,
                              QTableWidget, QTableWidgetItem, QVBoxLayout)
+
+from ida_kernwin import Choose
+import idautils
 
 import binascii
 import io
@@ -20,8 +23,11 @@ from functools import partial
 from os.path import expanduser
 
 ruleset_list = {}
+result_code = []
 tableWidget = QTableWidget()
 layout = QVBoxLayout()
+StartAddress = QLineEdit()
+EndAddress = QLineEdit()
 
 def get_string(addr):
     out = ""
@@ -282,6 +288,66 @@ class YaraChecker(PluginForm):
     def OnClose(self, form):
         pass
 
+class simplecodeviewer(simplecustviewer_t):
+    def __init__(self, num):
+        self.num = num
+
+    def Create(self, sn=None):
+        title = "Code_viewer"
+        if not simplecustviewer_t.Create(self, title):
+            return False
+        
+        for i in result_code:
+            self.AddLine(i[0] + ": \t\t" + i[1])
+
+        return True
+
+    def OnClick(self, shift):
+        line = self.GetCurrentLine().split(":")[0]
+        if self.num == "1":
+            StartAddress.setText(line)
+        elif self.num == "2":
+            EndAddress.setText(line)
+        print line
+        return True
+
+    def OnDblClick(self, shift):
+        pass
+
+    def OnClose(self):
+        pass
+
+class Function_Chooser(Choose):
+    def __init__(self, title, num):
+        Choose.__init__(self, title, [ ["Function Name", 30 | Choose.CHCOL_PLAIN] ])
+        self.items = []
+        self.icon = 41
+        self.num = num
+        
+    def OnInit(self):
+        self.items = [ [get_func_name(x), x] for x in idautils.Functions()]
+        return True
+        
+    def OnGetSize(self):
+        return len(self.items)
+        
+    def OnGetLine(self, n):
+        return self.items[n]
+        
+    def OnSelectLine(self, n):
+        global result_code, StartAddress, EndAddress
+        result_code = [] # reset list data
+        funcea = self.items[n][1]
+        for (startea, endea) in Chunks(funcea):
+            for head in Heads(startea, endea):
+                result_code.append(["0x%08x"%(head), GetDisasm(head), head])
+
+        v = simplecodeviewer(self.num)
+        v.Create()
+        v.Show()     
+        
+    def OnClose(self):
+        pass
 
 class YaraGenerator(PluginForm):
     def YaraExport(self):
@@ -296,6 +362,7 @@ class YaraGenerator(PluginForm):
         result += "rule " + self.Variable_name.text() + "\n{\n"
         result += "  meta:\n"
         result += "      tool = \"https://github.com/hy00un/YaraGenerator\"\n"
+        result += "      version = \"" + "1.1" + "\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
         result += "  strings:\n"
@@ -504,8 +571,9 @@ class YaraGenerator(PluginForm):
         layout.addWidget(tableWidget)
 
     def MakeRule(self):
-        start = int(self.StartAddress.text(), 16)
-        end = int(self.EndAddress.text(), 16)
+        global StartAddress, EndAddress
+        start = int(StartAddress.text(), 16)
+        end = int(EndAddress.text(), 16)
 
         if self.CheckBox3.isChecked(): ## Use String Option
             StringData = []
@@ -561,7 +629,7 @@ class YaraGenerator(PluginForm):
             self.TextEdit1.insertPlainText("{" + ''.join(ByteCode) + "}")
 
     def SaveRule(self):
-        global ruleset_list, tableWidget, layout
+        global ruleset_list, tableWidget, layout, StartAddress, EndAddress
         #info = idaapi.get_inf_structure()
         #if info.is_64bit():
         #    md = Cs(CS_ARCH_X86, CS_MODE_64)
@@ -574,10 +642,10 @@ class YaraGenerator(PluginForm):
             count = 0
             data = self.TextEdit1.toPlainText().split("\n")
             for i in data:
-                ruleset_list[self.Variable_name.text() + "_" + str(count)] = [i, self.StartAddress.text(), self.EndAddress.text()]
+                ruleset_list[self.Variable_name.text() + "_" + str(count)] = [i, StartAddress.text(), EndAddress.text()]
                 count += 1
         else:
-            ruleset_list[self.Variable_name.text()] = [self.TextEdit1.toPlainText(), self.StartAddress.text(), self.EndAddress.text()]
+            ruleset_list[self.Variable_name.text()] = [self.TextEdit1.toPlainText(), StartAddress.text(), EndAddress.text()]
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)
         tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
@@ -597,6 +665,10 @@ class YaraGenerator(PluginForm):
         self.YaraIcon = YaraIcon()
         self.YaraIcon.Show("YaraIcon")
 
+    def SelectFunc(self, num):
+        c = Function_Chooser("Function_Chooser", num)
+        c.Show()
+
     def OnCreate(self, form):
         global tableWidget, layout
         self.parent = self.FormToPyQtWidget(form)
@@ -609,10 +681,14 @@ class YaraGenerator(PluginForm):
         self.CheckBox3 = QCheckBox()
         self.Variable_name = QLineEdit()
         self.label2 = QLabel("Start Address : ")
-        self.StartAddress = QLineEdit()
+        # self.StartAddress = QLineEdit()
+        self.PushButton1 = QPushButton("select")
+        self.PushButton1.clicked.connect(partial(self.SelectFunc,"1"))
         self.label3 = QLabel("End Address : ")
-        self.EndAddress = QLineEdit()
+        # self.EndAddress = QLineEdit()
         self.TextEdit1 = QPlainTextEdit()
+        self.PushButton2 = QPushButton("select")
+        self.PushButton2.clicked.connect(partial(self.SelectFunc,"2"))
 
         self.MakeButton = QPushButton("Make")
         self.MakeButton.clicked.connect(self.MakeRule)
@@ -640,9 +716,11 @@ class YaraGenerator(PluginForm):
 
         GL2 = QGridLayout()
         GL2.addWidget(self.label2, 0, 1)
-        GL2.addWidget(self.StartAddress, 0, 2)
-        GL2.addWidget(self.label3, 0, 3)
-        GL2.addWidget(self.EndAddress, 0, 4)
+        GL2.addWidget(StartAddress, 0, 2) # global variable
+        GL2.addWidget(self.PushButton1, 0, 3)
+        GL2.addWidget(self.label3, 0, 4)
+        GL2.addWidget(EndAddress, 0, 5) # global variable
+        GL2.addWidget(self.PushButton2, 0, 6)
         layout.addLayout(GL2)
 
         layout.addWidget(self.TextEdit1)

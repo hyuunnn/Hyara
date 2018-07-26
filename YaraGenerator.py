@@ -293,7 +293,7 @@ class simplecodeviewer(simplecustviewer_t):
         self.num = num
 
     def Create(self, sn=None):
-        title = "Code_viewer"
+        title = "Code_Viewer"
         if not simplecustviewer_t.Create(self, title):
             return False
         

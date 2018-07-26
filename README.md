@@ -24,6 +24,9 @@ The wildcard feature is currently under study.
 <img src="images/string_option_2.png" width="100%">
 
 ### [ select option ]
+<img src="images/select_option_2.png" width="100%">
+
+## old_version/YaraGenerator_Using_simplecustviewer_Choose.py
 <img src="images/select_option_1.png" width="100%">
 
 ### Install & Tutorial

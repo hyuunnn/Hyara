@@ -514,18 +514,17 @@ class YaraGenerator(PluginForm):
 
             if text_section_endEA > start:
                 while start <= end:
-                    if GetMnem(start) == "push":
-                        if GetOpnd(start, 0).find("offset") != -1:
-                            variable = GetOpnd(start, 0).split(" ")[1]
-                            add = get_name_ea(start,variable)
-                            string, endEA = get_string(add)
-                            StringData.append(string)
+                    if GetOpnd(start, 0).find("offset") != -1:
+                        variable = GetOpnd(start, 0).split(" ")[1]
+                        add = get_name_ea(start,variable)
+                        string, endEA = get_string(add)
+                        StringData.append(string)
 
-                        elif GetOpnd(start, 1).find("offset") != -1:
-                            variable = GetOpnd(start, 1).split(" ")[1]
-                            add = get_name_ea(start,variable)
-                            string, endEA = get_string(add)
-                            StringData.append(string)
+                    elif GetOpnd(start, 1).find("offset") != -1:
+                        variable = GetOpnd(start, 1).split(" ")[1]
+                        add = get_name_ea(start,variable)
+                        string, endEA = get_string(add)
+                        StringData.append(string)
                     
                     start = idc.NextHead(start)
 

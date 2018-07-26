@@ -190,8 +190,8 @@ class YaraIcon(PluginForm):
         GL1.addWidget(icon3, 0, 2)
         GL1.addWidget(icon4, 0, 3)
         for idx,i in enumerate(self.img):
-            # https://stackoverflow.com/questions/35655755/qpixmap-argument-1-has-unexpected-type-pngimagefile?rq=1
-            # https://stackoverflow.com/questions/32908639/open-pil-image-from-byte-file
+            ## https://stackoverflow.com/questions/35655755/qpixmap-argument-1-has-unexpected-type-pngimagefile?rq=1
+            ## https://stackoverflow.com/questions/32908639/open-pil-image-from-byte-file
             image2 = Image.open(io.BytesIO(i))
             qimage = ImageQt(image2)
             pixmap = QPixmap.fromImage(qimage)
@@ -303,6 +303,7 @@ class simplecodeviewer(simplecustviewer_t):
         return True
 
     def OnClick(self, shift):
+        ## http://nullege.com/codes/search/idaapi.simplecustviewer_t.GetCurrentLine
         line = self.GetCurrentLine().split(":")[0]
         if self.num == "1":
             StartAddress.setText(line)
@@ -376,10 +377,10 @@ class YaraGenerator(PluginForm):
                         result += "          %-10s\t%-30s\t\t|%s" % (i.mnemonic.upper(), i.op_str.upper().replace("0X","0x"), byte_data.upper()) + "\n"
                     result += "      */\n"
 
-                # http://sparksandflames.com/files/x86InstructionChart.html
-                # https://pnx.tf/files/x86_opcode_structure_and_instruction_overview.png
-                # http://ref.x86asm.net/coder32.html
-                # http://www.mathemainzel.info/files/x86asmref.html #
+                ## http://sparksandflames.com/files/x86InstructionChart.html
+                ## https://pnx.tf/files/x86_opcode_structure_and_instruction_overview.png
+                ## http://ref.x86asm.net/coder32.html
+                ## http://www.mathemainzel.info/files/x86asmref.html #
                 if self.CheckBox2.isChecked(): # yara wildcard isChecked()
                     opcode = []
                     CODE = bytearray.fromhex(ruleset_list[name][0][1:-1].strip().replace("\\x"," "))

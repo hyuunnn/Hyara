@@ -285,7 +285,7 @@ class YaraChecker(PluginForm):
 
     def OnClose(self, form):
         pass
-
+## https://gist.github.com/romainthomas/bce94f1c37215f644e0c
 class Wrapper(IDAViewWrapper):
     def __init__(self, title, num):
         IDAViewWrapper.__init__(self, title)

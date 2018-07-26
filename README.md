@@ -23,6 +23,9 @@ The wildcard feature is currently under study.
 <img src="images/string_option_1.png" width="100%">
 <img src="images/string_option_2.png" width="100%">
 
+### [ select option ]
+<img src="images/select_option_1.png" width="100%">
+
 ### Install & Tutorial
 
 pip install yara-python

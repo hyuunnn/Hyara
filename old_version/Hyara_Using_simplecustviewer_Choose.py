@@ -350,7 +350,7 @@ class Function_Chooser(Choose):
     def OnClose(self):
         pass
 
-class YaraGenerator(PluginForm):
+class Hyara(PluginForm):
     def YaraExport(self):
         global ruleset_list
         info = idaapi.get_inf_structure()
@@ -362,7 +362,7 @@ class YaraGenerator(PluginForm):
         result = ""
         result += "rule " + self.Variable_name.text() + "\n{\n"
         result += "  meta:\n"
-        result += "      tool = \"https://github.com/hy00un/YaraGenerator\"\n"
+        result += "      tool = \"https://github.com/hy00un/Hyara\"\n"
         result += "      version = \"" + "1.1" + "\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
@@ -747,18 +747,18 @@ class YaraGenerator(PluginForm):
 
 class YaraPlugin(idaapi.plugin_t):
     flags = idaapi.PLUGIN_UNL
-    comment = "This is YaraGenerator"
+    comment = "This is Hyara"
     help = "help"
     wanted_name = "Yara_Generator"
     wanted_hotkey = "Ctrl+Shift+Y"
 
     def init(self):
-        idaapi.msg("YaraGenerator\n")
+        idaapi.msg("Hyara\n")
         return idaapi.PLUGIN_OK
 
     def run(self, arg):
-        plg = YaraGenerator()
-        plg.Show("YaraGenerator")
+        plg = Hyara()
+        plg.Show("Hyara")
 
     def term(self):
         pass

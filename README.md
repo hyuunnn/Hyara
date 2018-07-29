@@ -1,6 +1,6 @@
-## YaraGenerator (IDA Plugin)
+## Hyara (IDA Plugin)
 
-YaraGenerator is a tool to help you make yara rule in IDA.
+Hyara is a tool to help you make yara rule in IDA.
 
 If you enter an address, the assembly of that address is created as a Yara rule.
 
@@ -8,8 +8,8 @@ Complete automation is due to the existence of false positives.
 
 The wildcard feature is currently under study.
 
-### [ YaraGenerator ]
-<img src="images/YaraGenerator.png" width="100%">
+### [ Hyara ]
+<img src="images/Hyara.png" width="100%">
 
 ### [ YaraChecker ]
 <img src="images/YaraChecker_1.png" width="100%">
@@ -26,7 +26,7 @@ The wildcard feature is currently under study.
 ### [ select option ]
 <img src="images/select_option_2.png" width="100%">
 
-## old_version/YaraGenerator_Using_simplecustviewer_Choose.py
+## old_version/Hyara_Using_simplecustviewer_Choose.py
 <img src="images/select_option_1.png" width="100%">
 
 ### Install & Tutorial

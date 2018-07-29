@@ -51,6 +51,5 @@ assembler_disassembler HOT-KEY: Ctrl + Shift + A
 
 ### TODO
 * 와일드 카드 처리 정교화
-* IDA View-A 오른쪽 칸에 띄워주는 기능
 * string option 사용 시 unicode일 경우 다르게 처리 (구현 미정)
 * TableWidget 선택 삭제 (구현 미정)

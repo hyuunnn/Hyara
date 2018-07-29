@@ -722,13 +722,13 @@ class Hyara(PluginForm):
 
 class YaraPlugin(idaapi.plugin_t):
     flags = idaapi.PLUGIN_UNL
-    comment = "This is Hyara"
+    comment = "Hyara"
     help = "help"
-    wanted_name = "Yara_Generator"
+    wanted_name = "Hyara"
     wanted_hotkey = "Ctrl+Shift+Y"
 
     def init(self):
-        idaapi.msg("Hyara\n")
+        idaapi.msg("[*] Hyara Plugin\n")
         return idaapi.PLUGIN_OK
 
     def run(self, arg):

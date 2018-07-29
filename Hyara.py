@@ -1,4 +1,5 @@
-from idaapi import PluginForm, IDAViewWrapper, pycim_get_tcustom_control, get_custom_viewer_curline
+from idaapi import (PluginForm, IDAViewWrapper, pycim_get_tcustom_control, 
+                    get_custom_viewer_curline, find_widget, set_dock_pos, DP_RIGHT, DP_BOTTOM)
 from PIL import Image
 from PIL.ImageQt import ImageQt
 from PyQt5.QtCore import QRegExp, Qt
@@ -733,6 +734,16 @@ class YaraPlugin(idaapi.plugin_t):
     def run(self, arg):
         plg = Hyara()
         plg.Show("Hyara")
+        widget_a = find_widget("IDA View-A")
+        widget_Hyara = find_widget("Hyara")
+        widget_OW = find_widget("Output window")
+        if widget_Hyara and widget_a:
+            set_dock_pos("Hyara", "IDA View-A", DP_RIGHT)
+
+            if widget_OW:
+                set_dock_pos("Output window", "Functions window", DP_BOTTOM)
+
+        
 
     def term(self):
         pass

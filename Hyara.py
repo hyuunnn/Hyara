@@ -26,6 +26,8 @@ tableWidget = QTableWidget()
 layout = QVBoxLayout()
 StartAddress = QLineEdit()
 EndAddress = QLineEdit()
+flag = 0
+c = None
 
 def get_string(addr):
     out = ""
@@ -97,7 +99,7 @@ class YaraIcon(PluginForm):
     def SaveIcon(self, idx):
         global ruleset_list, tableWidget, layout
         data_ = self.img[idx][int(self.LineEdit1.text(),16):int(self.LineEdit1.text(),16) + int(self.LineEdit2.text(),10)]
-        ruleset_list[self.LineEdit3.text()] = ["{" + binascii.hexlify(data_) + "}", hex(int(self.LineEdit1.text(),16)), hex(int(self.LineEdit1.text(),16) + int(self.LineEdit2.text(),10))]
+        ruleset_list[self.LineEdit3.text()] = ["{" + binascii.hexlify(data_).upper() + "}", hex(int(self.LineEdit1.text(),16)), hex(int(self.LineEdit1.text(),16) + int(self.LineEdit2.text(),10))]
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)
         tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
@@ -111,7 +113,7 @@ class YaraIcon(PluginForm):
     def YaraMaker(self):
         for idx in range(len(self.img)):
             data_ = self.img[idx][int(self.LineEdit1.text(),16):int(self.LineEdit1.text(),16) + int(self.LineEdit2.text(),10)]
-            self.LineEdit_list[idx].setText("{" + binascii.hexlify(data_) + "}")
+            self.LineEdit_list[idx].setText("{" + binascii.hexlify(data_).upper() + "}")
 
     def OnCreate(self, form):
         self.parent = self.FormToPyQtWidget(form)
@@ -318,7 +320,7 @@ class Hyara(PluginForm):
         result += "rule " + self.Variable_name.text() + "\n{\n"
         result += "  meta:\n"
         result += "      tool = \"https://github.com/hy00un/Hyara\"\n"
-        result += "      version = \"" + "1.1" + "\"\n"
+        result += "      version = \"" + "1.2" + "\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
         result += "  strings:\n"
@@ -328,7 +330,7 @@ class Hyara(PluginForm):
                 if self.CheckBox1.isChecked():
                     result += "      /*\n"
                     for i in md.disasm(CODE, 0x1000):
-                        byte_data = "".join('{:02x}'.format(x) for x in i.bytes)
+                        byte_data = "".join('{:02X}'.format(x) for x in i.bytes)
                         result += "          %-10s\t%-30s\t\t|%s" % (i.mnemonic.upper(), i.op_str.upper().replace("0X","0x"), byte_data.upper()) + "\n"
                     result += "      */\n"
 
@@ -340,39 +342,39 @@ class Hyara(PluginForm):
                     opcode = []
                     CODE = bytearray.fromhex(ruleset_list[name][0][1:-1].strip().replace("\\x"," "))
                     for i in md.disasm(CODE, 0x1000):
-                        byte_data = "".join('{:02x}'.format(x) for x in i.bytes)
+                        byte_data = "".join('{:02X}'.format(x) for x in i.bytes)
 
-                        if byte_data.startswith("ff"): # ex) ff d7 -> call edi
-                            opcode.append("ff[1-5]")
+                        if byte_data.startswith("FF"): # ex) ff d7 -> call edi
+                            opcode.append("FF[1-5]")
 
-                        elif byte_data.startswith("0f"): # ex) 0f 84 bb 00 00 00 -> jz loc_40112A, 0f b6 0b -> movzx cx, byte ptr [ebx]
-                            opcode.append("0f[1-5]") # (multi byte)
+                        elif byte_data.startswith("0F"): # ex) 0f 84 bb 00 00 00 -> jz loc_40112A, 0f b6 0b -> movzx cx, byte ptr [ebx]
+                            opcode.append("0F[1-5]") # (multi byte)
 
-                        elif re.compile("7[0-9a-f]").match(byte_data): # jo, jno, jb, jnb, jz, jnz, jbe, ja, js, jns, jp, jnp, jl, jnl, jle, jnle
+                        elif re.compile("7[0-9A-F]").match(byte_data): # jo, jno, jb, jnb, jz, jnz, jbe, ja, js, jns, jp, jnp, jl, jnl, jle, jnle
                             opcode.append(byte_data[:2]+"??") # ex) 7c 7f -> jl 0x81 (7c only 1 byte) (1byte < have 0f)
 
                         elif i.mnemonic == "push":
-                            if re.compile("5[0-7]|0(6|e)|1(6|e)").match(byte_data): # push e[a-b-c]x ..
+                            if re.compile("5[0-7]|0(6|E)|1(6|E)").match(byte_data): # push e[a-b-c]x ..
                                 opcode.append(byte_data[:1]+"?")
-                            elif re.compile("6(8|a)+").match(byte_data):
+                            elif re.compile("6(8|A)+").match(byte_data):
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "pop":
-                            if re.compile("5[8-f]|07|1(7|f)").match(byte_data): # pop e[a-b-c]x ..
+                            if re.compile("5[8-F]|07|1(7|F)").match(byte_data): # pop e[a-b-c]x ..
                                 opcode.append(byte_data[:1]+"?")
-                            elif re.compile("8f").match(byte_data):
+                            elif re.compile("8F").match(byte_data):
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "mov":
-                            if re.compile("b[8-f]").match(byte_data): # ex) b8 01 22 00 00 -> mov eax, 0x2201, bf 38 00 00 00 -> mov edi, 38 , 8b 54 24 10 -> mov edx, [esp+32ch+var_31c]
+                            if re.compile("B[8-F]").match(byte_data): # ex) b8 01 22 00 00 -> mov eax, 0x2201, bf 38 00 00 00 -> mov edi, 38 , 8b 54 24 10 -> mov edx, [esp+32ch+var_31c]
                                 opcode.append(byte_data[:2]+"[4]")
-                            elif re.compile("b[0-7]").match(byte_data): # ex) b7 60 -> mov bh, 0x60
-                                opcode.append("b?"+byte_data[2:])
-                            elif re.compile("8[8-9a-c]|8e").match(byte_data): # ex) 8b 3d a8 e1 40 00 -> mov edi, ds:GetDlgItem
+                            elif re.compile("B[0-7]").match(byte_data): # ex) b7 60 -> mov bh, 0x60
+                                opcode.append("B?"+byte_data[2:])
+                            elif re.compile("8[8-9A-C]|8E").match(byte_data): # ex) 8b 3d a8 e1 40 00 -> mov edi, ds:GetDlgItem
                                 opcode.append(byte_data[:2]+"[1-4]") # ex) 8b 5c 24 14 -> mob ebx, [esp+10+ThreadParameter] , 8b f0 -> mov esi, eax
-                            elif re.compile("c[6-7]").match(byte_data): # ex) c7 44 24 1c 00 00 00 00 -> mov [esp+338+var_31c], 0
+                            elif re.compile("C[6-7]").match(byte_data): # ex) c7 44 24 1c 00 00 00 00 -> mov [esp+338+var_31c], 0
                                 opcode.append(byte_data[:2]+"[2-8]")
-                            elif re.compile("a[0-3]").match(byte_data):
+                            elif re.compile("A[0-3]").match(byte_data):
                                 opcode.append(byte_data[:2]+"[1-4]") # ex) a1 60 40 41 00 -> mov eax, __security_cookie
                             else:
                                 opcode.append(byte_data)
@@ -384,7 +386,7 @@ class Hyara(PluginForm):
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "dec":
-                            if re.compile("4[8-9a-f]").match(byte_data): # 48 ~ 4f
+                            if re.compile("4[8-9A-F]").match(byte_data): # 48 ~ 4f
                                 opcode.append(byte_data[:1]+"?")
                             else:
                                 opcode.append(byte_data)
@@ -410,17 +412,17 @@ class Hyara(PluginForm):
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "call":
-                            if re.compile("e8").match(byte_data):
-                                opcode.append("e8[4]") # call address(?? ?? ?? ??)
+                            if re.compile("E8").match(byte_data):
+                                opcode.append("E8[4]") # call address(?? ?? ?? ??)
                             else:
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "test":
-                            if re.compile("8[4-5]|a8").match(byte_data): # ex) 84 ea -> test dl, ch
+                            if re.compile("8[4-5]|A8").match(byte_data): # ex) 84 ea -> test dl, ch
                                 opcode.append(byte_data[:2]+"??") 
-                            elif re.compile("a9").match(byte_data): # ex) a9 ea 00 00 00 -> test eax, 0xea
-                                opcode.append("a9[4]")
-                            elif re.compile("f[6-7]").match(byte_data):
+                            elif re.compile("A9").match(byte_data): # ex) a9 ea 00 00 00 -> test eax, 0xea
+                                opcode.append("A9[4]")
+                            elif re.compile("F[6-7]").match(byte_data):
                                 opcode.append(byte_data[:2]+"[2-7]")
                             else:
                                 opcode.append(byte_data)
@@ -438,47 +440,47 @@ class Hyara(PluginForm):
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "lea":
-                            if re.compile("8d").match(byte_data): # ex) 8d 9b 00 00 00 00 -> lea ebx, [ebx+0] == 8d 1b
-                                opcode.append("8d[1-6]")
+                            if re.compile("8D").match(byte_data): # ex) 8d 9b 00 00 00 00 -> lea ebx, [ebx+0] == 8d 1b
+                                opcode.append("8D[1-6]")
                             else:
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "sub":
-                            if re.compile("2[8a-b]").match(byte_data): # ex) 2a 5c 24 14 -> sub	bl, byte ptr [esp + 0x14]
+                            if re.compile("2[8A-B]").match(byte_data): # ex) 2a 5c 24 14 -> sub	bl, byte ptr [esp + 0x14]
                                 opcode.append(byte_data[:2]+"[1-4]")
-                            elif re.compile("2c").match(byte_data): # ex) 28 da -> sub dl, bl
+                            elif re.compile("2C").match(byte_data): # ex) 28 da -> sub dl, bl
                                 opcode.append(byte_data[:2]+"??")
-                            elif re.compile("2d").match(byte_data): # ex) 2d da 00 00 00 -> sub eax, 0xda
-                                opcode.append("2d[4]")
+                            elif re.compile("2D").match(byte_data): # ex) 2d da 00 00 00 -> sub eax, 0xda
+                                opcode.append("2D[4]")
                             elif re.compile("8[2-3]").match(byte_data):
                                 opcode.append("8?"+byte_data[2:])
                             else:
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "or":
-                            if re.compile("0[8a-b]").match(byte_data): # ex) 08 14 30 -> or byte ptr [eax + esi], dl , 0b 5c 24 14 -> or ebx, dword ptr [esp + 0x14]
+                            if re.compile("0[8A-B]").match(byte_data): # ex) 08 14 30 -> or byte ptr [eax + esi], dl , 0b 5c 24 14 -> or ebx, dword ptr [esp + 0x14]
                                 opcode.append(byte_data[:2]+"[1-4]")
-                            elif re.compile("0c").match(byte_data): # ex) 0c ea -> or al, 0xea
+                            elif re.compile("0C").match(byte_data): # ex) 0c ea -> or al, 0xea
                                 opcode.append(byte_data[:2]+"??")
-                            elif re.compile("0d").match(byte_data): # ex) 0d ea 00 00 00 -> or eax, 0xea
-                                opcode.append("0d[4]")
+                            elif re.compile("0D").match(byte_data): # ex) 0d ea 00 00 00 -> or eax, 0xea
+                                opcode.append("0D[4]")
                             else:
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "cmp":
-                            if re.compile("3[8a-b]").match(byte_data):
+                            if re.compile("3[8A-B]").match(byte_data):
                                 opcode.append(byte_data[:2]+"[1-4]")
-                            elif re.compile("3c").match(byte_data): # ex) 3a ea -> cmp ch, dl
+                            elif re.compile("3C").match(byte_data): # ex) 3a ea -> cmp ch, dl
                                 opcode.append(byte_data[:2]+"??")
-                            elif re.compile("3d").match(byte_data): # ex) 3d ea 00 00 00 -> cmp eax, 0xea
-                                opcode.append("3d[4]")
+                            elif re.compile("3D").match(byte_data): # ex) 3d ea 00 00 00 -> cmp eax, 0xea
+                                opcode.append("3D[4]")
                             else:
                                 opcode.append(byte_data)
 
                         elif i.mnemonic == "shl" or i.mnemonic == "sar":
-                            if re.compile("c[0-1]").match(byte_data): # ex) c1 fa 02 -> sar edx, 2 , 
+                            if re.compile("C[0-1]").match(byte_data): # ex) c1 fa 02 -> sar edx, 2 , 
                                 opcode.append(byte_data[:2]+"[2]")
-                            elif re.compile("d[0-3]").match(byte_data): # ex) d0 fa -> sar dl, 1
+                            elif re.compile("D[0-3]").match(byte_data): # ex) d0 fa -> sar dl, 1
                                 opcode.append(byte_data[:2]+"??")
                             else:
                                 opcode.append(byte_data)
@@ -501,10 +503,10 @@ class Hyara(PluginForm):
                     except:
                         pass
 
-                    result += "      $" + name + " = {" + ''.join(opcode) + "}\n"
+                    result += "      $" + name + " = {" + ''.join(opcode).upper() + "}\n"
                 else:
-                    result += "      $" + name + " = " + ruleset_list[name][0]+"\n"
-            except ValueError:
+                    result += "      $" + name + " = " + ruleset_list[name][0].upper() +"\n"
+            except ValueError: # string option
                 result += "      $" + name + " = " + ruleset_list[name][0]+"\n"
         result += "  condition:\n"
         result += "      all of them\n"
@@ -582,7 +584,7 @@ class Hyara(PluginForm):
                 start = sub_end
 
             self.TextEdit1.clear()
-            self.TextEdit1.insertPlainText("{" + ''.join(ByteCode) + "}")
+            self.TextEdit1.insertPlainText("{" + ''.join(ByteCode).upper() + "}")
 
     def SaveRule(self):
         global ruleset_list, tableWidget, layout, StartAddress, EndAddress
@@ -621,20 +623,29 @@ class Hyara(PluginForm):
         self.YaraIcon = YaraIcon()
         self.YaraIcon.Show("YaraIcon")
 
-    def SelectWrapper(self, num):
-        self.c = Wrapper("IDA View-A", num)
-        self.c.Bind()
-        if num == "1":
-            print("[*] StartAddress SelectWrapper")
-        elif num == "2":
-            print("[*] EndAddress SelectWrapper")
+    def IDAWrapper(self, num):
+        global flag, c
 
-    def ExitWrapper(self):
-        self.c.Unbind()
-        print("[*] ExitWrapper")
+        if flag == 1:
+            c.Unbind()
+            flag = 0
+            print("[*] IDAViewWrapper Unbind")
+
+        elif num == "1":
+            c = Wrapper("IDA View-A", num)
+            c.Bind()
+            print("[*] StartAddress SelectWrapper")
+            flag = 1
+
+        elif num == "2":
+            c = Wrapper("IDA View-A", num)
+            c.Bind()
+            print("[*] EndAddress SelectWrapper")
+            flag = 1
 
     def OnCreate(self, form):
         global tableWidget, layout
+
         self.parent = self.FormToPyQtWidget(form)
         self.label1 = QLabel("Variable name : ")
         self.label_1 = QLabel("comment option")
@@ -646,17 +657,13 @@ class Hyara(PluginForm):
         self.Variable_name = QLineEdit()
         self.label2 = QLabel("Start Address : ")
         # self.StartAddress = QLineEdit()
-        self.PushButton1 = QPushButton("Select")
-        self.PushButton1.clicked.connect(partial(self.SelectWrapper,"1"))
-        self.PushButton2 = QPushButton("Exit")
-        self.PushButton2.clicked.connect(self.ExitWrapper)
+        self.PushButton1 = QPushButton("Select / Exit")
+        self.PushButton1.clicked.connect(partial(self.IDAWrapper,"1"))
         self.label3 = QLabel("End Address : ")
         # self.EndAddress = QLineEdit()
         self.TextEdit1 = QPlainTextEdit()
-        self.PushButton3 = QPushButton("Select")
-        self.PushButton3.clicked.connect(partial(self.SelectWrapper,"2"))
-        self.PushButton4 = QPushButton("Exit")
-        self.PushButton4.clicked.connect(self.ExitWrapper)
+        self.PushButton2 = QPushButton("Select / Exit")
+        self.PushButton2.clicked.connect(partial(self.IDAWrapper,"2"))
 
         self.MakeButton = QPushButton("Make")
         self.MakeButton.clicked.connect(self.MakeRule)
@@ -686,11 +693,9 @@ class Hyara(PluginForm):
         GL2.addWidget(self.label2, 0, 1)
         GL2.addWidget(StartAddress, 0, 2) # global variable
         GL2.addWidget(self.PushButton1, 0, 3)
-        GL2.addWidget(self.PushButton2, 0, 4)
-        GL2.addWidget(self.label3, 0, 5)
-        GL2.addWidget(EndAddress, 0, 6) # global variable
-        GL2.addWidget(self.PushButton3, 0, 7)
-        GL2.addWidget(self.PushButton4, 0, 8)
+        GL2.addWidget(self.label3, 0, 4)
+        GL2.addWidget(EndAddress, 0, 5) # global variable
+        GL2.addWidget(self.PushButton2, 0, 6)
         layout.addLayout(GL2)
 
         layout.addWidget(self.TextEdit1)

@@ -12,6 +12,8 @@ IDA Pro 7.0
 
 Python 2.7.13
 
+capstone 3.0.5rc2
+
 keystone 0.9.1
 
 yara-python 3.7.0

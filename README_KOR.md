@@ -1,33 +1,21 @@
 # Hyara (IDA Plugin)
-
 Hyara는 IDA를 활용하여 yara rule을 작성할 때 편리함을 제공하는 도구입니다.
-
 시작 주소와 끝 주소를 입력하면 자동으로 rule을 작성해줍니다.
-
-GUI로 제작되었으며, 기능과 개선은 현재 진행 중에 있습니다.
+GUI로 제작되었으며, 기능 추가 및 개선은 현재 지속적으로 진행되고 있습니다.
 
 ## 테스트 환경
-
 IDA Pro 7.0
-
 Python 2.7.13
 
 ## 설치 방법
-
 pip install yara-python pefile pillow 
-
 pip install capstone 또는 모듈 인스톨러 설치 (https://www.capstone-engine.org/download.html)
-
 pip install keystone-engine 또는 모듈 인스톨러 설치 (http://www.keystone-engine.org/download/)
-
 copy Hyara.py C:\Program Files\IDA 7.0\plugins
-
 copy assembler_disassembler.py C:\Program Files\IDA 7.0\plugins
 
 ## 핫 키
-
 Hyara HOT-KEY : Ctrl + Shift + Y
-
 assembler_disassembler HOT-KEY: Ctrl + Shift + A
 
 ## 기능

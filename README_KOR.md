@@ -32,9 +32,9 @@ $ pip install -r requirements.txt
 
 (http://www.keystone-engine.org/download/)
 
-copy Hyara.py to C:\Program Files\IDA 7.0\plugins
+copy Hyara.py to (IDA Pro installation directory)/plugins
 
-copy assembler_disassembler.py to C:\Program Files\IDA 7.0\plugins
+copy assembler_disassembler.py to (IDA Pro installation directory)/plugins
 
 ## 핫 키
 

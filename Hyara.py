@@ -434,7 +434,7 @@ class Hyara(PluginForm):
 
                         elif i.mnemonic == "and":
                             if re.compile("8[0-3]").match(byte_data):
-                                opcode.append(byte_data[:3]+"? [1-8]") # ex) 81 e3 f8 07 00 00 -> and ebx, 7f8
+                                opcode.append(byte_data[:2]+ byte_data[2:3] + "? [4]") # ex) 81 e3 f8 07 00 00 -> and ebx, 7f8
                             elif re.compile("2[0-3]").match(byte_data):
                                 opcode.append(byte_data[:2]+" [1-4]")
                             elif re.compile("24").match(byte_data):

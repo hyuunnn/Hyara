@@ -511,7 +511,7 @@ class Hyara(PluginForm):
                     result += "      $" + name + " = {" + ' '.join(opcode).upper() + "}\n"
                 else:
                     opcode = pretty_hex(ruleset_list[name][0][1:-1])
-                    result += "      $" + name + " = {" + opcode.upper() +" }\n"
+                    result += "      $" + name + " = {" + opcode.upper() +"}\n"
             except ValueError: # string option
                 result += "      $" + name + " = " + ruleset_list[name][0]+"\n"
         result += "  condition:\n"

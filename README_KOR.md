@@ -12,13 +12,23 @@ IDA Pro 7.0
 
 Python 2.7.13
 
+keystone 0.9.1
+
+yara-python 3.7.0
+
+pefile 2017.11.5
+
+Pillow 5.2.0
+
 ## 설치 방법
 
-pip install yara-python pefile pillow 
+pip install -r requirements.txt
 
-pip install capstone 또는 모듈 인스톨러 설치 (https://www.capstone-engine.org/download.html)
+(윈도우 사용자는 capstone, keystone 사이트에 들어가서 설치 파일 사용하기)
 
-pip install keystone-engine 또는 모듈 인스톨러 설치 (http://www.keystone-engine.org/download/)
+(https://www.capstone-engine.org/download.html)
+
+(http://www.keystone-engine.org/download/)
 
 copy Hyara.py C:\Program Files\IDA 7.0\plugins
 

@@ -41,7 +41,8 @@ assembler_disassembler HOT-KEY: Ctrl + Shift + A
 ### string option 기능 설명
 - 1번째 사진에 하나 남아있었던 string option은 아래 사진과 같이 string을 뽑아올 때 사용됩니다.
 - .text section은 코드 영역이기 때문에 IDA에서 해석해주는 어셈 코드에서 "offset"이라는 문자열을 체크 한 후에 따라오는 변수의 string을 가져오고, .text endEA 이후는 코드 영역이 아니기 때문에 문자열을 그대로 가져오게 됩니다.
-- 이 기능은 유니크한 문자열이지만, IDA에서 제대로 해석해주지 못할 경우 rule 작성에 편리함을 제공합니다.
+- 다양한 string을 뽑아와야 하는 경우에 활용 할 수 있습니다.
+- 만약에 유니크한 문자열이지만, IDA에서 제대로 해석해주지 못할 경우 rule 작성에 편리함을 제공합니다.
 <img src="images/Hyara_2.png" width="100%">
 
 ### YaraChecker 기능 설명

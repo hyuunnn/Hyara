@@ -77,3 +77,7 @@ assembler_disassembler HOT-KEY: Ctrl + Shift + A
 - rule 작성 시 와일드카드를 사용 할 때 어셈코드가 어떻게 변하는지 확인한 후에 작성해야합니다.
 - 주로 변환해주는 웹 사이트를 사용했었는데, 도구를 사용하면 바로 확인이 가능합니다.
 <img src="images/assem_disassembler.png" width="100%">
+
+## Special Thanks
+
+- <a href="https://twitter.com/kjkwak12">kjkwak12</a>

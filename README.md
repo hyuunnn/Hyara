@@ -73,3 +73,7 @@ assembler_disassembler: Ctrl + Shift + A
 - old_version/Hyara_Using_simplecustviewer_Choose.py)
 - This version uses Choose and simplecustviewer.
 <img src="images/Hyara_old.png" width="100%">
+
+## Special Thanks
+
+- <a href="https://twitter.com/kjkwak12">kjkwak12</a>

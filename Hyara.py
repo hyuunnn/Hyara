@@ -310,6 +310,10 @@ class Wrapper(IDAViewWrapper):
 
 class Hyara(PluginForm):
     def YaraExport(self):
+
+        def pretty_hex(data):
+            return ' '.join(data[i:i+2] for i in range(0, len(data), 2))
+
         global ruleset_list
         info = idaapi.get_inf_structure()
         if info.is_64bit():
@@ -346,156 +350,156 @@ class Hyara(PluginForm):
                         byte_data = "".join('{:02X}'.format(x) for x in i.bytes)
 
                         if byte_data.startswith("FF"): # ex) ff d7 -> call edi
-                            opcode.append("FF[1-5]")
+                            opcode.append("FF [1-5]")
 
                         elif byte_data.startswith("0F"): # ex) 0f 84 bb 00 00 00 -> jz loc_40112A, 0f b6 0b -> movzx cx, byte ptr [ebx]
-                            opcode.append("0F[1-5]") # (multi byte)
+                            opcode.append("0F [1-5]") # (multi byte)
 
                         elif re.compile("7[0-9A-F]").match(byte_data): # jo, jno, jb, jnb, jz, jnz, jbe, ja, js, jns, jp, jnp, jl, jnl, jle, jnle
-                            opcode.append(byte_data[:2]+"??") # ex) 7c 7f -> jl 0x81 (7c only 1 byte) (1byte < have 0f)
+                            opcode.append(byte_data[:2]+" ??") # ex) 7c 7f -> jl 0x81 (7c only 1 byte) (1byte < have 0f)
 
                         elif i.mnemonic == "push":
                             if re.compile("5[0-7]|0(6|E)|1(6|E)").match(byte_data): # push e[a-b-c]x ..
                                 opcode.append(byte_data[:1]+"?")
                             elif re.compile("6(8|A)+").match(byte_data):
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "pop":
                             if re.compile("5[8-F]|07|1(7|F)").match(byte_data): # pop e[a-b-c]x ..
                                 opcode.append(byte_data[:1]+"?")
                             elif re.compile("8F").match(byte_data):
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "mov":
                             if re.compile("B[8-F]").match(byte_data): # ex) b8 01 22 00 00 -> mov eax, 0x2201, bf 38 00 00 00 -> mov edi, 38 , 8b 54 24 10 -> mov edx, [esp+32ch+var_31c]
-                                opcode.append(byte_data[:2]+"[4]")
+                                opcode.append(byte_data[:2]+" [4]")
                             elif re.compile("B[0-7]").match(byte_data): # ex) b7 60 -> mov bh, 0x60
-                                opcode.append("B?"+byte_data[2:])
+                                opcode.append("B? "+byte_data[2:])
                             elif re.compile("8[8-9A-C]|8E").match(byte_data): # ex) 8b 3d a8 e1 40 00 -> mov edi, ds:GetDlgItem
-                                opcode.append(byte_data[:2]+"[1-4]") # ex) 8b 5c 24 14 -> mob ebx, [esp+10+ThreadParameter] , 8b f0 -> mov esi, eax
+                                opcode.append(byte_data[:2]+" [1-4]") # ex) 8b 5c 24 14 -> mob ebx, [esp+10+ThreadParameter] , 8b f0 -> mov esi, eax
                             elif re.compile("C[6-7]").match(byte_data): # ex) c7 44 24 1c 00 00 00 00 -> mov [esp+338+var_31c], 0
-                                opcode.append(byte_data[:2]+"[2-8]")
+                                opcode.append(byte_data[:2]+" [2-8]")
                             elif re.compile("A[0-3]").match(byte_data):
-                                opcode.append(byte_data[:2]+"[1-4]") # ex) a1 60 40 41 00 -> mov eax, __security_cookie
+                                opcode.append(byte_data[:2]+" [1-4]") # ex) a1 60 40 41 00 -> mov eax, __security_cookie
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "inc":
                             if re.compile("4[0-7]").match(byte_data):
                                 opcode.append(byte_data[:1]+"?")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "dec":
                             if re.compile("4[8-9A-F]").match(byte_data): # 48 ~ 4f
                                 opcode.append(byte_data[:1]+"?")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "xor":
                             if re.compile("3[0-3]").match(byte_data):
-                                opcode.append(byte_data[:2]+"[1-4]")
+                                opcode.append(byte_data[:2]+" [1-4]")
                             elif re.compile("34").match(byte_data): # ex) 34 da -> xor al, 0xda 
-                                opcode.append(byte_data[:2]+"??")
+                                opcode.append(byte_data[:2]+" ??")
                             elif re.compile("35").match(byte_data): # ex) 35 da 00 00 00 -> xor eax, 0xda
-                                opcode.append("35[4]")
+                                opcode.append("35 [4]")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "add":
                             if re.compile("0[0-3]").match(byte_data):
-                                opcode.append(byte_data[:2]+"[1-4]")
+                                opcode.append(byte_data[:2]+" [1-4]")
                             elif re.compile("04").match(byte_data): # ex) 04 da -> xor al, 0xda 
-                                opcode.append(byte_data[:2]+"??")
+                                opcode.append(byte_data[:2]+" ??")
                             elif re.compile("05").match(byte_data): # ex) 05 da 00 00 00 -> xor eax, 0xda
-                                opcode.append("05[4]")
+                                opcode.append("05 [4]")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "call":
                             if re.compile("E8").match(byte_data):
-                                opcode.append("E8[4]") # call address(?? ?? ?? ??)
+                                opcode.append("E8 [4]") # call address(?? ?? ?? ??)
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "test":
                             if re.compile("8[4-5]|A8").match(byte_data): # ex) 84 ea -> test dl, ch
-                                opcode.append(byte_data[:2]+"??") 
+                                opcode.append(byte_data[:2]+" ??") 
                             elif re.compile("A9").match(byte_data): # ex) a9 ea 00 00 00 -> test eax, 0xea
-                                opcode.append("A9[4]")
+                                opcode.append("A9 [4]")
                             elif re.compile("F[6-7]").match(byte_data):
-                                opcode.append(byte_data[:2]+"[2-7]")
+                                opcode.append(byte_data[:2]+" [2-7]")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "and":
                             if re.compile("8[0-3]").match(byte_data):
-                                opcode.append(byte_data[:3]+"?[1-8]") # ex) 81 e3 f8 07 00 00 -> and ebx, 7f8
+                                opcode.append(byte_data[:3]+"? [1-8]") # ex) 81 e3 f8 07 00 00 -> and ebx, 7f8
                             elif re.compile("2[0-3]").match(byte_data):
-                                opcode.append(byte_data[:2]+"[1-4]")
+                                opcode.append(byte_data[:2]+" [1-4]")
                             elif re.compile("24").match(byte_data):
-                                opcode.append(byte_data[:2]+"??") # ex) 22 d1 -> and dl, cl
+                                opcode.append(byte_data[:2]+" ??") # ex) 22 d1 -> and dl, cl
                             elif re.compile("25").match(byte_data):
-                                opcode.append(byte_data[:2]+"[4]")
+                                opcode.append(byte_data[:2]+" [4]")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "lea":
                             if re.compile("8D").match(byte_data): # ex) 8d 9b 00 00 00 00 -> lea ebx, [ebx+0] == 8d 1b
-                                opcode.append("8D[1-6]")
+                                opcode.append("8D [1-6]")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "sub":
                             if re.compile("2[8A-B]").match(byte_data): # ex) 2a 5c 24 14 -> sub	bl, byte ptr [esp + 0x14]
-                                opcode.append(byte_data[:2]+"[1-4]")
+                                opcode.append(byte_data[:2]+" [1-4]")
                             elif re.compile("2C").match(byte_data): # ex) 28 da -> sub dl, bl
-                                opcode.append(byte_data[:2]+"??")
+                                opcode.append(byte_data[:2]+" ??")
                             elif re.compile("2D").match(byte_data): # ex) 2d da 00 00 00 -> sub eax, 0xda
-                                opcode.append("2D[4]")
+                                opcode.append("2D [4]")
                             elif re.compile("8[2-3]").match(byte_data):
-                                opcode.append("8?"+byte_data[2:])
+                                opcode.append("8? "+byte_data[2:])
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "or":
                             if re.compile("0[8A-B]").match(byte_data): # ex) 08 14 30 -> or byte ptr [eax + esi], dl , 0b 5c 24 14 -> or ebx, dword ptr [esp + 0x14]
-                                opcode.append(byte_data[:2]+"[1-4]")
+                                opcode.append(byte_data[:2]+" [1-4]")
                             elif re.compile("0C").match(byte_data): # ex) 0c ea -> or al, 0xea
-                                opcode.append(byte_data[:2]+"??")
+                                opcode.append(byte_data[:2]+" ??")
                             elif re.compile("0D").match(byte_data): # ex) 0d ea 00 00 00 -> or eax, 0xea
-                                opcode.append("0D[4]")
+                                opcode.append("0D [4]")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "cmp":
                             if re.compile("3[8A-B]").match(byte_data):
-                                opcode.append(byte_data[:2]+"[1-4]")
+                                opcode.append(byte_data[:2]+" [1-4]")
                             elif re.compile("3C").match(byte_data): # ex) 3a ea -> cmp ch, dl
-                                opcode.append(byte_data[:2]+"??")
+                                opcode.append(byte_data[:2]+" ??")
                             elif re.compile("3D").match(byte_data): # ex) 3d ea 00 00 00 -> cmp eax, 0xea
-                                opcode.append("3D[4]")
+                                opcode.append("3D [4]")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         elif i.mnemonic == "shl" or i.mnemonic == "sar":
                             if re.compile("C[0-1]").match(byte_data): # ex) c1 fa 02 -> sar edx, 2 , 
-                                opcode.append(byte_data[:2]+"[2]")
+                                opcode.append(byte_data[:2]+" [2]")
                             elif re.compile("D[0-3]").match(byte_data): # ex) d0 fa -> sar dl, 1
-                                opcode.append(byte_data[:2]+"??")
+                                opcode.append(byte_data[:2]+" ??")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
                         
                         elif i.mnemonic == "xchg":
                             if re.compile("9[1-7]").match(byte_data):
                                 opcode.append(byte_data[:1]+"?")
                             elif re.compile("8[6-7]").match(byte_data):
-                                opcode.append(byte_Data[:2]+ "[1-6]")
+                                opcode.append(byte_Data[:2]+ " [1-6]")
                             else:
-                                opcode.append(byte_data)
+                                opcode.append(pretty_hex(byte_data))
 
                         else:
-                            opcode.append(byte_data)
+                            opcode.append(pretty_hex(byte_data))
 
 
                     try:
@@ -504,9 +508,10 @@ class Hyara(PluginForm):
                     except:
                         pass
 
-                    result += "      $" + name + " = {" + ''.join(opcode).upper() + "}\n"
+                    result += "      $" + name + " = {" + ' '.join(opcode).upper() + "}\n"
                 else:
-                    result += "      $" + name + " = " + ruleset_list[name][0].upper() +"\n"
+                    opcode = pretty_hex(ruleset_list[name][0][1:-1])
+                    result += "      $" + name + " = {" + opcode.upper() +" }\n"
             except ValueError: # string option
                 result += "      $" + name + " = " + ruleset_list[name][0]+"\n"
         result += "  condition:\n"

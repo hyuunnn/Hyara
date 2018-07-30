@@ -24,7 +24,7 @@ Pillow 5.2.0
 
 ## 설치 방법
 
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 
 (윈도우 사용자는 capstone, keystone 사이트에 들어가서 설치 파일 사용하기)
 
@@ -32,9 +32,9 @@ pip install -r requirements.txt
 
 (http://www.keystone-engine.org/download/)
 
-copy Hyara.py C:\Program Files\IDA 7.0\plugins
+copy Hyara.py to C:\Program Files\IDA 7.0\plugins
 
-copy assembler_disassembler.py C:\Program Files\IDA 7.0\plugins
+copy assembler_disassembler.py to C:\Program Files\IDA 7.0\plugins
 
 ## 핫 키
 

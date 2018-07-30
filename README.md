@@ -22,7 +22,7 @@ Pillow 5.2.0
 
 ## Installation
 
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 
 (if an error occurs during the installation of capstone or keystone, go to the installation page for each libarary and use the installation files)
 
@@ -30,9 +30,9 @@ pip install -r requirements.txt
 
 (http://www.keystone-engine.org/download/)
 
-copy Hyara.py C:\Program Files\IDA 7.0\plugins
+copy Hyara.py to C:\Program Files\IDA 7.0\plugins
 
-copy assembler_disassembler.py C:\Program Files\IDA 7.0\plugins
+copy assembler_disassembler.py to C:\Program Files\IDA 7.0\plugins
 
 ## Hotkeys
 Hyara: Ctrl + Shift + Y

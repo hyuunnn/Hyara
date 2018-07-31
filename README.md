@@ -24,7 +24,7 @@ Pillow 5.2.0
 
 $ pip install -r requirements.txt
 
-(if an error occurs during the installation of capstone or keystone, go to the installation page for each libarary and use the installation files)
+(if error occurs during the installation of capstone or keystone, go to the installation page for each libarary and use the installation files)
 
 (https://www.capstone-engine.org/download.html)
 

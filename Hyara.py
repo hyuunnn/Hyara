@@ -581,7 +581,7 @@ class Hyara(PluginForm):
                     if i == "":
                         continue
 
-                    self.TextEdit1.insertPlainText("\""+i+"\"" + " nocase wide ascii" + "\n")
+                    self.TextEdit1.insertPlainText("\""+ i.replace("\\","\\\\") + "\"" + " nocase wide ascii" + "\n")
 
                 TE1_text = self.TextEdit1.toPlainText().rstrip('\n')
                 self.TextEdit1.clear()
@@ -598,7 +598,7 @@ class Hyara(PluginForm):
                     if i == "":
                         continue
 
-                    self.TextEdit1.insertPlainText("\""+i+"\"" + " nocase wide ascii" + "\n")
+                    self.TextEdit1.insertPlainText("\""+ i.replace("\\","\\\\") +"\"" + " nocase wide ascii" + "\n")
 
                 TE1_text = self.TextEdit1.toPlainText().rstrip('\n')
                 self.TextEdit1.clear()

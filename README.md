@@ -72,7 +72,7 @@ assembler_disassembler: Ctrl + Shift + A
 
 
 ### Description of "old_version"
-- old_version/Hyara_Using_simplecustviewer_Choose.py)
+- (old_version/Hyara_Using_simplecustviewer_Choose.py)
 - This version uses Choose and simplecustviewer.
 <img src="images/Hyara_old.png" width="100%">
 

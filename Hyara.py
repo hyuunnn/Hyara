@@ -32,14 +32,29 @@ c = None
 
 def get_string(addr):
     out = ""
-    while True:
-        if Byte(addr) != 0:
-            out += chr(Byte(addr))
-        else:
+    assem_data = GetDisasm(addr)
+
+    if "UTF-16LE" in assem_data:
+        while True:
+            if Byte(addr) == 0 and Byte(addr+1) == 0:
+                addr += 2
+                break
+            else:
+                out += chr(Byte(addr))
+                out += chr(Byte(addr+1))
+            addr += 2
+        return out.decode("utf-16le"), addr
+
+    else:
+        while True:
+            if Byte(addr) != 0:
+                out += chr(Byte(addr))
+            else:
+                addr += 1
+                break
             addr += 1
-            break
-        addr += 1
-    return out, addr
+    
+        return out, addr
 
 class YaraHighlighter(QSyntaxHighlighter):
     def __init__(self, document):
@@ -563,7 +578,11 @@ class Hyara(PluginForm):
                 StringData = [x for x in StringData if x]
                 self.TextEdit1.clear()
                 for i in StringData:
-                    self.TextEdit1.insertPlainText("\""+i+"\"" + "\n")
+                    if i == "":
+                        continue
+
+                    self.TextEdit1.insertPlainText("\""+i+"\"" + " nocase wide ascii" + "\n")
+
                 TE1_text = self.TextEdit1.toPlainText().rstrip('\n')
                 self.TextEdit1.clear()
                 self.TextEdit1.insertPlainText(TE1_text)
@@ -576,7 +595,11 @@ class Hyara(PluginForm):
                 StringData = [x for x in StringData if x]
                 self.TextEdit1.clear()
                 for i in StringData:
-                    self.TextEdit1.insertPlainText("\""+i+"\"" + "\n")
+                    if i == "":
+                        continue
+
+                    self.TextEdit1.insertPlainText("\""+i+"\"" + " nocase wide ascii" + "\n")
+
                 TE1_text = self.TextEdit1.toPlainText().rstrip('\n')
                 self.TextEdit1.clear()
                 self.TextEdit1.insertPlainText(TE1_text)

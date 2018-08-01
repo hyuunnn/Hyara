@@ -330,7 +330,7 @@ class YaraDetector(PluginForm):
         matches = rule.match(data=data)
         for match in matches:
             for i in match.strings:
-                result.append([hex(i[0]).replace("L",""), i[1], binascii.hexlify(i[2])])
+                result.append([hex(i[0]).replace("L",""), i[1], i[2]])
 
         self.tableWidget.setRowCount(len(result))
         

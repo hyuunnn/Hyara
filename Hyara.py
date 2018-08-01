@@ -317,17 +317,12 @@ class YaraDetector(PluginForm):
         self.path.setText(path[0])
 
     def Search(self):
-        imagebase = idaapi.get_imagebase()
         result = []
         rulepath = open(self.path.text(), "r")
         rule = yara.compile(source=rulepath.read())
         rulepath.close()
-
-        f = open(GetInputFilePath(), "rb")
-        data = f.read()
-        f.close()
         
-        matches = rule.match(data=data)
+        matches = rule.match(data=self.data)
         for match in matches:
             for i in match.strings:
                 result.append([hex(i[0]).replace("L",""), i[1], i[2]])
@@ -335,15 +330,30 @@ class YaraDetector(PluginForm):
         self.tableWidget.setRowCount(len(result))
         
         for idx, i in enumerate(result):
-            self.tableWidget.setItem(idx, 0, QTableWidgetItem(hex(imagebase + int(i[0], 16)).replace("L","")))
+            self.tableWidget.setItem(idx, 0, QTableWidgetItem(hex(int(i[0], 16)).replace("L","")))
             self.tableWidget.setItem(idx, 1, QTableWidgetItem(i[1]))
             self.tableWidget.setItem(idx, 2, QTableWidgetItem(i[2]))
         self.layout.addWidget(self.tableWidget)
 
     def jump_addr(self, row, column):
-        jumpto(int(self.tableWidget.item(row, 0).text(), 16))
+        addr = int(self.tableWidget.item(row, 0).text(), 16) ## RAW
+        RVA = 0
+
+        for i in range(len(self.Seg)-1):
+            if self.Seg[i][0] < addr < self.Seg[i+1][0]:
+                RVA = idaapi.get_fileregion_ea(addr)
+                break
+                
+        jumpto(RVA)
 
     def OnCreate(self, form):
+        f = open(GetInputFilePath(), "rb")
+        self.data = f.read()
+        f.close()
+
+        self.Seg = [[idaapi.get_fileregion_offset(i), i] for i in Segments()]
+        self.Seg.append([len(self.data), 0])
+
         self.parent = self.FormToPyQtWidget(form)
         self.path = QLineEdit()
         self.label1 = QLabel("Yara Path : ")

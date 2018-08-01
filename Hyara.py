@@ -269,7 +269,7 @@ class YaraChecker(PluginForm):
 
     def OnCreate(self, form):
         self.parent = self.FormToPyQtWidget(form)
-        self.label1 = QLabel("Search Path")
+        self.label1 = QLabel("Folder Path : ")
         self.path = QLineEdit()
         self.PathButton = QPushButton("path")
         self.PathButton.clicked.connect(self.choose_path)        
@@ -286,10 +286,11 @@ class YaraChecker(PluginForm):
 
         self.layout = QVBoxLayout()
         GL1 = QGridLayout()
-        GL1.addWidget(self.path, 0, 0)
-        GL1.addWidget(self.PathButton, 0, 1)
-        GL1.addWidget(self.label3, 0, 2)
-        GL1.addWidget(self.label4, 0, 3)
+        GL1.addWidget(self.label1, 0, 0)
+        GL1.addWidget(self.path, 0, 1)
+        GL1.addWidget(self.PathButton, 0, 2)
+        GL1.addWidget(self.label3, 0, 3)
+        GL1.addWidget(self.label4, 0, 4)
         self.layout.addLayout(GL1)
 
         self.layout.addWidget(self.label2)
@@ -305,6 +306,72 @@ class YaraChecker(PluginForm):
 
     def OnClose(self, form):
         pass
+
+class YaraDetector(PluginForm):
+    def choose_path(self):
+        path = QFileDialog.getOpenFileName(
+            self.parent,
+            "Open a file",
+            expanduser("~"),
+            "Yara Rule Files(*.yar *.yara)")
+        self.path.setText(path[0])
+
+    def Search(self):
+        imagebase = idaapi.get_imagebase()
+        result = []
+        rulepath = open(self.path.text(), "r")
+        rule = yara.compile(source=rulepath.read())
+        rulepath.close()
+
+        f = open(GetInputFilePath(), "rb")
+        data = f.read()
+        f.close()
+        
+        matches = rule.match(data=data)
+        for match in matches:
+            for i in match.strings:
+                result.append([hex(i[0]).replace("L",""), i[1], binascii.hexlify(i[2])])
+
+        self.tableWidget.setRowCount(len(result))
+        
+        for idx, i in enumerate(result):
+            self.tableWidget.setItem(idx, 0, QTableWidgetItem(hex(imagebase + int(i[0], 16)).replace("L","")))
+            self.tableWidget.setItem(idx, 1, QTableWidgetItem(i[1]))
+            self.tableWidget.setItem(idx, 2, QTableWidgetItem(i[2]))
+        self.layout.addWidget(self.tableWidget)
+
+    def jump_addr(self, row, column):
+        jumpto(int(self.tableWidget.item(row, 0).text(), 16))
+
+    def OnCreate(self, form):
+        self.parent = self.FormToPyQtWidget(form)
+        self.path = QLineEdit()
+        self.label1 = QLabel("Yara Path : ")
+        self.PathButton = QPushButton("Yara File")
+        self.PathButton.clicked.connect(self.choose_path)
+        self.SearchButton = QPushButton("Search")
+        self.SearchButton.clicked.connect(self.Search)
+
+        self.layout = QVBoxLayout()
+        GL1 = QGridLayout()
+        GL1.addWidget(self.label1, 0, 0)
+        GL1.addWidget(self.path, 0, 1)
+        GL1.addWidget(self.PathButton, 0, 2)
+        self.layout.addLayout(GL1)
+        self.layout.addWidget(self.SearchButton)
+
+        self.tableWidget = QTableWidget()
+        self.tableWidget.cellClicked.connect(self.jump_addr)
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setColumnCount(3)
+        self.tableWidget.setHorizontalHeaderLabels(["Address", "Variable_name", "String"])
+        self.layout.addWidget(self.tableWidget)
+
+        self.parent.setLayout(self.layout)
+
+    def OnClose(self, form):
+        pass
+
 ## https://gist.github.com/romainthomas/bce94f1c37215f644e0c
 class Wrapper(IDAViewWrapper):
     def __init__(self, title, num):
@@ -674,6 +741,10 @@ class Hyara(PluginForm):
             print("[*] EndAddress SelectWrapper")
             flag = 1
 
+    def YaraDetector(self):
+        self.YaraDetector = YaraDetector()
+        self.YaraDetector.Show("YaraDetector")
+
     def OnCreate(self, form):
         global tableWidget, layout
 
@@ -706,6 +777,8 @@ class Hyara(PluginForm):
         self.YaraExportButton.clicked.connect(self.YaraExport)
         self.YaraCheckerButton = QPushButton("Yara Checker")
         self.YaraCheckerButton.clicked.connect(self.YaraChecker)
+        self.YaraDetectorButton = QPushButton("Yara Detector")
+        self.YaraDetectorButton.clicked.connect(self.YaraDetector)
         self.YaraIconButton = QPushButton("Yara Icon")
         self.YaraIconButton.clicked.connect(self.YaraIcon)
 
@@ -737,7 +810,8 @@ class Hyara(PluginForm):
         GL3.addWidget(self.DeleteButton, 0, 2)
         GL3.addWidget(self.YaraExportButton, 0, 3)
         GL3.addWidget(self.YaraCheckerButton, 0, 4)
-        GL3.addWidget(self.YaraIconButton, 0, 5)
+        GL3.addWidget(self.YaraDetectorButton, 0, 5)
+        GL3.addWidget(self.YaraIconButton, 0, 6)
         layout.addLayout(GL3)
 
         tableWidget.setRowCount(0)

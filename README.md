@@ -3,7 +3,7 @@ Hyara is IDA Plugin that provides convenience when writing yararule.
 
 You can designate the start and end addresses to automatically create rules.
 
-It was created based on GUI, and adding features and improvements are currently underway.
+It is created based on GUI, and adding features and improvements are currently underway.
 
 ## Test Environment
 IDA Pro 7.0

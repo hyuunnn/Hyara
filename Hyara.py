@@ -9,6 +9,8 @@ from PyQt5.QtWidgets import (QCheckBox, QFileDialog, QGridLayout, QLabel,
                              QLineEdit, QPlainTextEdit, QPushButton,
                              QTableWidget, QTableWidgetItem, QVBoxLayout)
 
+from capstone import *
+
 import idautils
 
 import binascii

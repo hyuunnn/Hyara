@@ -61,6 +61,9 @@ assembler_disassembler: Ctrl + Shift + A
 - The recursive feature is applied by default, so you should carefully set the path.
 <img src="images/Hyara_3.png" width="100%">
 
+### YaraDetector
+<img src="images/Hyara_7.png" width="100%">
+
 ### YaraIcon
 - "YaraIcon" provides the convenience when you write the rule with Icon.
 <img src="images/Hyara_4.png" width="100%">

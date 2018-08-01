@@ -62,7 +62,7 @@ assembler_disassembler: Ctrl + Shift + A
 <img src="images/Hyara_3.png" width="100%">
 
 ### YaraDetector
-<img src="images/Hyara_7.png" width="100%">
+<img src="images/Hyara__7.png" width="100%">
 
 ### YaraIcon
 - "YaraIcon" provides the convenience when you write the rule with Icon.

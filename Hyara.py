@@ -336,11 +336,12 @@ class YaraDetector(PluginForm):
         self.layout.addWidget(self.tableWidget)
 
     def jump_addr(self, row, column):
-        addr = int(self.tableWidget.item(row, 0).text(), 16) ## RAW
+        addr = int(self.tableWidget.item(row, 0).text(), 16) # RAW
         RVA = 0
 
         for i in range(len(self.Seg)-1):
             if self.Seg[i][0] < addr < self.Seg[i+1][0]:
+                ## https://reverseengineering.stackexchange.com/questions/2835/how-to-extract-the-input-file-offset-of-a-byte-in-idapython
                 RVA = idaapi.get_fileregion_ea(addr)
                 break
                 
@@ -633,7 +634,7 @@ class Hyara(PluginForm):
         start = int(StartAddress.text(), 16)
         end = int(EndAddress.text(), 16)
 
-        if self.CheckBox3.isChecked(): ## Use String Option
+        if self.CheckBox3.isChecked(): # Use String Option
             StringData = []
             ## https://reverseengineering.stackexchange.com/questions/3603/how-to-extract-all-the-rodata-data-and-bss-section-using-idc-script-in-ida-pro
             text_section_endEA = idaapi.get_segm_by_name(".text").endEA
@@ -704,7 +705,7 @@ class Hyara(PluginForm):
         #CODE = bytearray.fromhex(self.TextEdit1.toPlainText()[1:-1].strip().replace("\\x"," "))
         #for i in md.disasm(CODE, 0x1000):
         #    print("0x%x:\t%s\t%s" %(i.address, i.mnemonic, i.op_str))
-        if self.CheckBox3.isChecked(): ## Use String Option
+        if self.CheckBox3.isChecked(): # Use String Option
             count = 0
             data = self.TextEdit1.toPlainText().split("\n")
             for i in data:

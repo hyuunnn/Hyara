@@ -135,7 +135,7 @@ class YaraIcon(PluginForm):
 
     def OnCreate(self, form):
         self.parent = self.FormToPyQtWidget(form)
-        self.pe = pefile.PE(GetInputFilePath())
+        self.pe = pefile.PE(GetInputFilePath().decode("utf-8"))
         self.EntryPoint = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
         self.ImageBase = self.pe.OPTIONAL_HEADER.ImageBase
         self.section_list = {}
@@ -348,7 +348,7 @@ class YaraDetector(PluginForm):
         jumpto(RVA)
 
     def OnCreate(self, form):
-        f = open(GetInputFilePath(), "rb")
+        f = open(GetInputFilePath().decode("utf-8"), "rb")
         self.data = f.read()
         f.close()
 

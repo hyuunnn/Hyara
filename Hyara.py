@@ -1,14 +1,21 @@
-from idaapi import (PluginForm, IDAViewWrapper, pycim_get_tcustom_control, 
-                    get_custom_viewer_curline, find_widget, set_dock_pos, DP_RIGHT, DP_BOTTOM)
+from idaapi import *
 from PIL import Image
 from PIL.ImageQt import ImageQt
-from PyQt5.QtCore import QRegExp, Qt
-from PyQt5.QtGui import (QColor, QFont, QPixmap, QSyntaxHighlighter,
-                         QTextCharFormat)
-from PyQt5.QtWidgets import (QCheckBox, QFileDialog, QGridLayout, QLabel,
-                             QLineEdit, QPlainTextEdit, QPushButton,
-                             QTableWidget, QTableWidgetItem, QVBoxLayout)
 
+if idaapi.IDA_SDK_VERSION >= 700:
+    ida7_version = 1
+else:
+    ida7_version = 0
+
+try:
+    from PyQt5.QtCore import *
+    from PyQt5.QtGui import *
+    from PyQt5.QtWidgets import *
+except:
+    from PySide.QtCore import *
+    from PySide.QtGui import *
+    from PySide import QtGui
+    #from PySide.QtWidgets import *
 from capstone import *
 
 import idautils
@@ -134,7 +141,10 @@ class YaraIcon(PluginForm):
             self.LineEdit_list[idx].setText("{" + binascii.hexlify(data_).upper() + "}")
 
     def OnCreate(self, form):
-        self.parent = self.FormToPyQtWidget(form)
+        try:
+            self.parent = self.FormToPyQtWidget(form)
+        except:
+            self.parent = self.FormToPySideWidget(form)
         self.pe = pefile.PE(GetInputFilePath().decode("utf-8"))
         self.EntryPoint = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
         self.ImageBase = self.pe.OPTIONAL_HEADER.ImageBase
@@ -268,7 +278,10 @@ class YaraChecker(PluginForm):
         self.layout.addWidget(self.tableWidget)
 
     def OnCreate(self, form):
-        self.parent = self.FormToPyQtWidget(form)
+        try:
+            self.parent = self.FormToPyQtWidget(form)
+        except:
+            self.parent = self.FormToPySideWidget(form)
         self.label1 = QLabel("Folder Path : ")
         self.path = QLineEdit()
         self.PathButton = QPushButton("path")
@@ -355,7 +368,10 @@ class YaraDetector(PluginForm):
         self.Seg = [[idaapi.get_fileregion_offset(i), i] for i in Segments()]
         self.Seg.append([len(self.data), 0])
 
-        self.parent = self.FormToPyQtWidget(form)
+        try:
+            self.parent = self.FormToPyQtWidget(form)
+        except:
+            self.parent = self.FormToPySideWidget(form)
         self.path = QLineEdit()
         self.label1 = QLabel("Yara Path : ")
         self.PathButton = QPushButton("Yara File")
@@ -395,8 +411,12 @@ class Wrapper(IDAViewWrapper):
 
         line = get_custom_viewer_curline(widget, from_mouse)
         line = line[line.find(":")+len(":"):]
-        line = binascii.hexlify(line).split("2002")[0]
-        line = binascii.unhexlify(line)
+        if ida7_version == 1:
+            line = binascii.hexlify(line).split("2002")[0]
+            line = binascii.unhexlify(line)
+        else:
+            line = binascii.hexlify(line).split("0213")[0]
+            line = binascii.unhexlify(line)
         
         if self.num == "1":
             StartAddress.setText(line)
@@ -729,9 +749,11 @@ class Hyara(PluginForm):
         self.YaraChecker.Show("YaraChecker")
 
     def YaraIcon(self):
-        self.YaraIcon = YaraIcon()
-        self.YaraIcon.Show("YaraIcon")
-
+        if ida7_version == 1:
+            self.YaraIcon = YaraIcon()
+            self.YaraIcon.Show("YaraIcon")
+        else:
+            print "IDA Version is not 7"
     def IDAWrapper(self, num):
         global flag, c
 
@@ -753,13 +775,19 @@ class Hyara(PluginForm):
             flag = 1
 
     def YaraDetector(self):
-        self.YaraDetector = YaraDetector()
-        self.YaraDetector.Show("YaraDetector")
+        if ida7_version == 1:
+            self.YaraDetector = YaraDetector()
+            self.YaraDetector.Show("YaraDetector")
+        else:
+            print "IDA Version is not 7"
 
     def OnCreate(self, form):
         global tableWidget, layout
 
-        self.parent = self.FormToPyQtWidget(form)
+        try:
+            self.parent = self.FormToPyQtWidget(form)
+        except:
+            self.parent = self.FormToPySideWidget(form)
         self.label1 = QLabel("Variable name : ")
         self.label_1 = QLabel("comment option")
         self.CheckBox1 = QCheckBox()
@@ -849,15 +877,17 @@ class YaraPlugin(idaapi.plugin_t):
     def run(self, arg):
         plg = Hyara()
         plg.Show("Hyara")
-        widget_a = find_widget("IDA View-A")
-        widget_Hyara = find_widget("Hyara")
-        widget_OW = find_widget("Output window")
-        if widget_Hyara and widget_a:
-            set_dock_pos("Hyara", "IDA View-A", DP_RIGHT)
+        try:
+            widget_a = find_widget("IDA View-A")
+            widget_Hyara = find_widget("Hyara")
+            widget_OW = find_widget("Output window")
+            if widget_Hyara and widget_a:
+                set_dock_pos("Hyara", "IDA View-A", DP_RIGHT)
 
-            if widget_OW:
-                set_dock_pos("Output window", "Functions window", DP_BOTTOM)
-
+                if widget_OW:
+                    set_dock_pos("Output window", "Functions window", DP_BOTTOM)
+        except:
+            print "This option is IDA version 7.0"
         
 
     def term(self):

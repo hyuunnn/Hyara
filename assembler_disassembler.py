@@ -1,8 +1,14 @@
 from idaapi import PluginForm
 
-from PyQt5.QtWidgets import QRadioButton, QTableWidget, QLineEdit, QPlainTextEdit, QPushButton, QLabel, QVBoxLayout, QGridLayout
-from PyQt5.QtGui import QColor
-from PyQt5.QtCore import Qt
+try:
+    from PyQt5.QtCore import *
+    from PyQt5.QtGui import *
+    from PyQt5.QtWidgets import *
+except:
+    from PySide.QtCore import *
+    from PySide.QtGui import *
+    #from PySide.QtWidgets import *
+    from PySide import QtGui
 
 from capstone import *
 from keystone import *
@@ -62,7 +68,10 @@ class Tools(PluginForm):
                 print("ERROR: %s" %e)
 
     def OnCreate(self, form):
-        self.parent = self.FormToPyQtWidget(form)
+        try:
+            self.parent = self.FormToPyQtWidget(form)
+        except:
+            self.parent = self.FormToPySideWidget(form)
         self.label1 = QLabel("Assembler")
         self.label2 = QLabel("Diassembler")
         self.label3 = QLabel("Answer")

@@ -43,7 +43,7 @@ def get_string(addr):
     out = ""
     assem_data = GetDisasm(addr)
 
-    if "UTF-16LE" in assem_data:
+    if "UTF-16LE" in assem_data or "unicode" in assem_data:
         while True:
             if Byte(addr) == 0 and Byte(addr+1) == 0:
                 addr += 2
@@ -145,7 +145,11 @@ class YaraIcon(PluginForm):
             self.parent = self.FormToPyQtWidget(form)
         except:
             self.parent = self.FormToPySideWidget(form)
-        self.pe = pefile.PE(GetInputFilePath().decode("utf-8"))
+
+        try:
+            self.pe = pefile.PE(GetInputFilePath().decode("utf-8"))
+        except:
+            self.pe = pefile.PE(GetInputFilePath())
         self.EntryPoint = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
         self.ImageBase = self.pe.OPTIONAL_HEADER.ImageBase
         self.section_list = {}
@@ -361,7 +365,10 @@ class YaraDetector(PluginForm):
         jumpto(RVA)
 
     def OnCreate(self, form):
-        f = open(GetInputFilePath().decode("utf-8"), "rb")
+        try:
+            f = open(GetInputFilePath().decode("utf-8"), "rb")
+        except:
+            f = open(GetInputFilePath(), "rb")
         self.data = f.read()
         f.close()
 
@@ -749,11 +756,9 @@ class Hyara(PluginForm):
         self.YaraChecker.Show("YaraChecker")
 
     def YaraIcon(self):
-        if ida7_version == 1:
-            self.YaraIcon = YaraIcon()
-            self.YaraIcon.Show("YaraIcon")
-        else:
-            print "YaraIcon is available version 7.0 or later"
+        self.YaraIcon = YaraIcon()
+        self.YaraIcon.Show("YaraIcon")
+
     def IDAWrapper(self, num):
         global flag, c
 
@@ -775,11 +780,8 @@ class Hyara(PluginForm):
             flag = 1
 
     def YaraDetector(self):
-        if ida7_version == 1:
-            self.YaraDetector = YaraDetector()
-            self.YaraDetector.Show("YaraDetector")
-        else:
-            print "YaraDetector is available version 7.0 or later"
+        self.YaraDetector = YaraDetector()
+        self.YaraDetector.Show("YaraDetector")
 
     def OnCreate(self, form):
         global tableWidget, layout

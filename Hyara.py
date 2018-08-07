@@ -43,7 +43,7 @@ def get_string(addr):
     out = ""
     assem_data = GetDisasm(addr)
 
-    if "UTF-16LE" in assem_data or "unicode" in assem_data:
+    if "text \"UTF-16LE\"" in assem_data or "unicode 0," in assem_data:
         while True:
             if Byte(addr) == 0 and Byte(addr+1) == 0:
                 addr += 2
@@ -644,7 +644,10 @@ class Hyara(PluginForm):
 
     def DeleteRule(self):
         global ruleset_list, tableWidget, layout
-        if idaapi.ask_yn(idaapi.ASKBTN_NO, "Delete Yara Rule"):
+        try:
+            if idaapi.ask_yn(idaapi.ASKBTN_NO, "Delete Yara Rule"):
+                ruleset_list = {}
+        except:
             ruleset_list = {}
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)

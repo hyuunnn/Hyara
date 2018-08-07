@@ -753,7 +753,7 @@ class Hyara(PluginForm):
             self.YaraIcon = YaraIcon()
             self.YaraIcon.Show("YaraIcon")
         else:
-            print "IDA Version is not 7"
+            print "YaraIcon is available version 7.0 or later"
     def IDAWrapper(self, num):
         global flag, c
 
@@ -779,7 +779,7 @@ class Hyara(PluginForm):
             self.YaraDetector = YaraDetector()
             self.YaraDetector.Show("YaraDetector")
         else:
-            print "IDA Version is not 7"
+            print "YaraDetector is available version 7.0 or later"
 
     def OnCreate(self, form):
         global tableWidget, layout
@@ -887,7 +887,7 @@ class YaraPlugin(idaapi.plugin_t):
                 if widget_OW:
                     set_dock_pos("Output window", "Functions window", DP_BOTTOM)
         except:
-            print "This option is IDA version 7.0"
+            print "find_widget option is available version 7.0 or later"
         
 
     def term(self):

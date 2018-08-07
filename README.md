@@ -6,7 +6,10 @@ You can designate the start and end addresses to automatically create rules.
 It is created based on GUI, and adding features and improvements are currently underway.
 
 ## Test Environment
-IDA Pro 7.0
+
+IDA Pro 6.8 ~ 7.0
+
+(YaraDetector, YaraIcon are available version 7.0 or later)
 
 Python 2.7.13
 

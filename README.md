@@ -9,8 +9,6 @@ It is created based on GUI, and adding features and improvements are currently u
 
 IDA Pro 6.8 ~ 7.0
 
-(YaraDetector, YaraIcon available only for IDA 7.0 or later due to the API compatibility)
-
 Python 2.7.13
 
 capstone 3.0.5rc2

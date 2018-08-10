@@ -661,6 +661,7 @@ class Hyara(PluginForm):
 
     def MakeRule(self):
         global StartAddress, EndAddress
+        blacklist = ["unk_", "loc_", "SEH_"]
         start = int(StartAddress.text(), 16)
         end = int(EndAddress.text(), 16)
 
@@ -671,13 +672,13 @@ class Hyara(PluginForm):
 
             if text_section_endEA > start:
                 while start <= end:
-                    if GetOpnd(start, 0).find("offset") != -1:
+                    if "offset" in GetOpnd(start, 0) and not any(i in GetOpnd(start, 0) for i in blacklist):
                         variable = GetOpnd(start, 0).split(" ")[1]
                         add = get_name_ea(start,variable)
                         string, endEA = get_string(add)
                         StringData.append(string)
 
-                    elif GetOpnd(start, 1).find("offset") != -1:
+                    elif "offset" in GetOpnd(start, 1) and not any(i in GetOpnd(start, 1) for i in blacklist):
                         variable = GetOpnd(start, 1).split(" ")[1]
                         add = get_name_ea(start,variable)
                         string, endEA = get_string(add)

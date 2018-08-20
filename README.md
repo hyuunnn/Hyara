@@ -53,8 +53,7 @@ assembler_disassembler: Ctrl + Shift + A
 
 ### String option
 - This option is to extract strings within the range user specified.
-<img src="images/Hyara_2.png" width="100%">
-<img src="images/Hyara__5.png" width="100%">
+<img src="images/Hyara___5.png" width="100%">
 <img src="images/Hyara_6.png" width="100%">
 
 ### YaraChecker

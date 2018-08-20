@@ -349,7 +349,23 @@ class YaraDetector(PluginForm):
         for idx, i in enumerate(result):
             self.tableWidget.setItem(idx, 0, QTableWidgetItem(hex(int(i[0], 16)).replace("L","")))
             self.tableWidget.setItem(idx, 1, QTableWidgetItem(i[1]))
-            self.tableWidget.setItem(idx, 2, QTableWidgetItem(i[2]))
+            text_endea = idaapi.get_segm_by_name(".text").endEA
+            size = idaapi.get_fileregion_ea(int(i[0], 16))
+
+            if size < text_endea:
+                a = []
+                info = idaapi.get_inf_structure()
+                if info.is_64bit():
+                    md = Cs(CS_ARCH_X86, CS_MODE_64)
+                elif info.is_32bit():
+                    md = Cs(CS_ARCH_X86, CS_MODE_32)
+
+                for i in md.disasm(i[2], 0x1000):
+                    a.append(i.mnemonic + " " + i.op_str)
+                self.tableWidget.setItem(idx, 2, QTableWidgetItem(' || '.join(a)))
+            else:
+                self.tableWidget.setItem(idx, 2, QTableWidgetItem(i[2]))
+
         self.layout.addWidget(self.tableWidget)
 
     def jump_addr(self, row, column):

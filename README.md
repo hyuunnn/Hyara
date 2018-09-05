@@ -67,7 +67,8 @@ assembler_disassembler: Ctrl + Shift + A
 
 ### YaraDetector
 <img src="images/Hyara___7.png" width="100%">
-YaraDetector shows which part is detected in the sample loaded to IDA, and when "Address" is clicked, it moves to the corresponding address on the IDA View.
+- YaraDetector shows which part is detected in the sample loaded to IDA, and when "Address" is clicked, it moves to the corresponding address on the IDA View.
+
 ### YaraIcon
 - "YaraIcon" provides the convenience when you write the rule with Icon.
 <img src="images/Hyara_4.png" width="100%">

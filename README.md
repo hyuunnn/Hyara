@@ -46,7 +46,7 @@ assembler_disassembler: Ctrl + Shift + A
 
 ## Features
 ### Hyara start screen and 2 options
-- When you run Hyara, it aligns to the right like the below picture and the output window is aligned to the left.
+- When you run Hyara, it aligns to the right like the above picture and the output window is aligned to the left.
 - Select/Exit button uses IDAViewWrapper api to get the clicked address in IDA View. After done, you have to press it again to finish.
 - After specifying the address, press the "Make" button to show the specified hexadecimal or strings as a result.
 - When you click "Save", those results will be saved in the table below.
@@ -67,7 +67,7 @@ assembler_disassembler: Ctrl + Shift + A
 
 ### YaraDetector
 <img src="images/Hyara___7.png" width="100%">
-
+YaraDetector shows which part is detected in the sample loaded to IDA, and when "Address" is clicked, it moves to the corresponding address on the IDA View.
 ### YaraIcon
 - "YaraIcon" provides the convenience when you write the rule with Icon.
 <img src="images/Hyara_4.png" width="100%">
@@ -84,5 +84,4 @@ assembler_disassembler: Ctrl + Shift + A
 <img src="images/Hyara_old.png" width="100%">
 
 ## Special Thanks
-
 - <a href="https://twitter.com/kjkwak12">kjkwak12</a>

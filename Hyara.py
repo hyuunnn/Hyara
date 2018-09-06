@@ -257,30 +257,55 @@ class YaraChecker(PluginForm):
         self.path.setText(path)
 
     def Search(self):
-        rule = yara.compile(source=self.TextEdit1.toPlainText())
-        result = {}
-        for i in os.walk(self.path.text()):
-            for j in i[2]:
+        if self.CheckButton.isChecked():
+            rule = yara.compile(source=self.TextEdit1.toPlainText())
+            result = {}
+            for i in os.walk(self.path.text()):
+                for j in i[2]:
+                    try:
+                        f = open(i[0] + "\\" + j, "rb")
+                        data = f.read()
+                        matches = rule.match(data=data)
+                        f.close()
+                        for match in matches:
+                            strings = match.strings[0]
+                            result[os.path.basename(j)] = [i[0], hex(strings[0]).replace("L",""), strings[1], binascii.hexlify(strings[2])]
+                    except IOError: # Permission denied
+                        continue
+            self.tableWidget.setRowCount(len(result.keys()))
+            self.label4.setText(str(len(result.keys())))
+            
+            for idx, filename in enumerate(result.keys()):
+                self.tableWidget.setItem(idx, 0, QTableWidgetItem(result[filename][0]))
+                self.tableWidget.setItem(idx, 1, QTableWidgetItem(filename))
+                self.tableWidget.setItem(idx, 2, QTableWidgetItem(result[filename][1]))
+                self.tableWidget.setItem(idx, 3, QTableWidgetItem(result[filename][2]))
+                self.tableWidget.setItem(idx, 4, QTableWidgetItem(result[filename][3]))
+            self.layout.addWidget(self.tableWidget)
+        else:
+            rule = yara.compile(source=self.TextEdit1.toPlainText())
+            result = {}
+            for i in os.listdir(self.path.text()):
                 try:
-                    f = open(i[0] + "\\" + j, "rb")
+                    f = open(self.path.text() + "\\" + i)
                     data = f.read()
                     matches = rule.match(data=data)
                     f.close()
                     for match in matches:
                         strings = match.strings[0]
-                        result[os.path.basename(j)] = [i[0], hex(strings[0]).replace("L",""), strings[1], binascii.hexlify(strings[2])]
+                        result[i] = [self.path.text(), hex(strings[0]).replace("L",""), strings[1], binascii.hexlify(strings[2])]
                 except IOError: # Permission denied
                     continue
-        self.tableWidget.setRowCount(len(result.keys()))
-        self.label4.setText(str(len(result.keys())))
-        
-        for idx, filename in enumerate(result.keys()):
-            self.tableWidget.setItem(idx, 0, QTableWidgetItem(result[filename][0]))
-            self.tableWidget.setItem(idx, 1, QTableWidgetItem(filename))
-            self.tableWidget.setItem(idx, 2, QTableWidgetItem(result[filename][1]))
-            self.tableWidget.setItem(idx, 3, QTableWidgetItem(result[filename][2]))
-            self.tableWidget.setItem(idx, 4, QTableWidgetItem(result[filename][3]))
-        self.layout.addWidget(self.tableWidget)
+            self.tableWidget.setRowCount(len(result.keys()))
+            self.label4.setText(str(len(result.keys())))
+            
+            for idx, filename in enumerate(result.keys()):
+                self.tableWidget.setItem(idx, 0, QTableWidgetItem(result[filename][0]))
+                self.tableWidget.setItem(idx, 1, QTableWidgetItem(filename))
+                self.tableWidget.setItem(idx, 2, QTableWidgetItem(result[filename][1]))
+                self.tableWidget.setItem(idx, 3, QTableWidgetItem(result[filename][2]))
+                self.tableWidget.setItem(idx, 4, QTableWidgetItem(result[filename][3]))
+            self.layout.addWidget(self.tableWidget)
 
     def SortingTable(self):
         global header_clicked
@@ -293,6 +318,7 @@ class YaraChecker(PluginForm):
             header_clicked = 0
 
     def OnCreate(self, form):
+        check_button = 0
         try:
             self.parent = self.FormToPyQtWidget(form)
         except:
@@ -306,6 +332,8 @@ class YaraChecker(PluginForm):
         self.TextEdit1.setStyleSheet("""QPlainTextEdit{
                                             font-family:'Consolas';}""")
         self.highlighter = YaraHighlighter(self.TextEdit1.document())
+        self.CheckButton = QCheckBox()
+        self.label5 = QLabel("Recursive option")
         self.TextEdit1.insertPlainText(self.data)
         self.SearchButton = QPushButton("Search")
         self.SearchButton.clicked.connect(self.Search)
@@ -317,8 +345,10 @@ class YaraChecker(PluginForm):
         GL1.addWidget(self.label1, 0, 0)
         GL1.addWidget(self.path, 0, 1)
         GL1.addWidget(self.PathButton, 0, 2)
-        GL1.addWidget(self.label3, 0, 3)
-        GL1.addWidget(self.label4, 0, 4)
+        GL1.addWidget(self.label5, 0, 3)
+        GL1.addWidget(self.CheckButton, 0, 4)
+        GL1.addWidget(self.label3, 0, 5)
+        GL1.addWidget(self.label4, 0, 6)
         self.layout.addLayout(GL1)
 
         self.layout.addWidget(self.label2)

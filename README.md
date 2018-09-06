@@ -62,7 +62,7 @@ assembler_disassembler: Ctrl + Shift + A
 
 ### YaraChecker
 - You can test the yararule you write on the fly.
-- The recursive feature is applied by default, so you should carefully set the path.
+- It has general option and recursive option.
 - It also provides table alignment.
 <img src="images/Hyara_3.png" width="100%">
 

@@ -37,6 +37,7 @@ layout = QVBoxLayout()
 StartAddress = QLineEdit()
 EndAddress = QLineEdit()
 flag = 0
+header_clicked = 0
 c = None
 
 def get_string(addr):
@@ -281,6 +282,16 @@ class YaraChecker(PluginForm):
             self.tableWidget.setItem(idx, 4, QTableWidgetItem(result[filename][3]))
         self.layout.addWidget(self.tableWidget)
 
+    def SortingTable(self):
+        global header_clicked
+
+        if header_clicked == 0:
+            self.tableWidget.setSortingEnabled(True)
+            hedaer_clicked = 1
+        else:
+            self.tableWidget.setSortingEnabled(False)
+            header_clicked = 0
+
     def OnCreate(self, form):
         try:
             self.parent = self.FormToPyQtWidget(form)
@@ -318,6 +329,8 @@ class YaraChecker(PluginForm):
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setHorizontalHeaderLabels(["Path", "Filename", "Address", "Variable_name", "String"])
+        header = self.tableWidget.horizontalHeader()
+        header.sectionClicked.connect(self.SortingTable)
         self.layout.addWidget(self.tableWidget)
         self.parent.setLayout(self.layout)
 

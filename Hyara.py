@@ -287,7 +287,7 @@ class YaraChecker(PluginForm):
             result = {}
             for i in os.listdir(self.path.text()):
                 try:
-                    f = open(self.path.text() + "\\" + i)
+                    f = open(self.path.text() + "\\" + i, "rb")
                     data = f.read()
                     matches = rule.match(data=data)
                     f.close()

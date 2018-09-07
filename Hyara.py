@@ -27,6 +27,7 @@ import re
 import time
 import pefile
 import yara
+import csv
 
 from functools import partial
 from os.path import expanduser
@@ -256,6 +257,31 @@ class YaraChecker(PluginForm):
             QFileDialog.ShowDirsOnly)
         self.path.setText(path)
 
+    def choose_path2(self):
+        path = QFileDialog.getExistingDirectory(
+            self.parent,
+            "Open a folder",
+            expanduser("~"),
+            QFileDialog.ShowDirsOnly)
+        self.path2.setText(path)
+
+    def export_csv(self):
+        f = open(self.path2.text() + "\\result.csv", 'wb')
+        wr = csv.writer(f)
+        wr.writerow(["Path", "Filename", "Address", "Variable_name", "String"])
+        row = self.tableWidget.rowCount()
+        #col = self.tableWidget.columnCount()
+        
+        for i in range(0,row):
+            wr.writerow([self.tableWidget.item(i,0).text(),
+                            self.tableWidget.item(i,1).text(),
+                            self.tableWidget.item(i,2).text(),
+                            self.tableWidget.item(i,3).text(),
+                            self.tableWidget.item(i,4).text(),
+                    ])
+        f.close()
+        print("[*] Export csv file Complete.")
+
     def Search(self):
         if self.CheckButton.isChecked():
             rule = yara.compile(source=self.TextEdit1.toPlainText())
@@ -339,6 +365,11 @@ class YaraChecker(PluginForm):
         self.SearchButton.clicked.connect(self.Search)
         self.label3 = QLabel("Detect Count : ")
         self.label4 = QLabel("0")
+        self.path2 = QLineEdit()
+        self.PathButton2 = QPushButton("path")
+        self.PathButton2.clicked.connect(self.choose_path2)
+        self.EnterButton = QPushButton("Enter")
+        self.PathButton2.clicked.connect(self.export_csv)
 
         self.layout = QVBoxLayout()
         GL1 = QGridLayout()
@@ -355,6 +386,13 @@ class YaraChecker(PluginForm):
         self.layout.addWidget(self.TextEdit1)
         self.layout.addWidget(self.SearchButton)
 
+        GL2 = QGridLayout()
+        GL2.addWidget(QLabel("CSV Export"), 0, 0)
+        GL2.addWidget(self.path2, 0, 1)
+        GL2.addWidget(self.PathButton2, 0, 2)
+        GL2.addWidget(self.EnterButton, 0, 3)
+        self.layout.addLayout(GL2)
+
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(5)
@@ -362,6 +400,7 @@ class YaraChecker(PluginForm):
         header = self.tableWidget.horizontalHeader()
         header.sectionClicked.connect(self.SortingTable)
         self.layout.addWidget(self.tableWidget)
+
         self.parent.setLayout(self.layout)
 
     def OnClose(self, form):

@@ -28,6 +28,7 @@ import time
 import pefile
 import yara
 import csv
+import hashlib
 
 from functools import partial
 from os.path import expanduser
@@ -193,7 +194,7 @@ class YaraIcon(PluginForm):
                         name = str(resource_type)
                         offset = resource.data.struct.OffsetToData
                         size = resource.data.struct.Size
-                        RVA_ = int(self.section_list['.rsrc'][0],16) - int(self.section_list['.rsrc'][2],16)
+                        RVA_ = int(self.section_list['.rsrc'][0],16) - int(self.section_list['.rsrc'][2],16) # VirtualAddress - PointerToRawData
                         real_offset = offset - RVA_
                         img_size = hex(size)[2:]
                         if len(img_size) % 2 == 1:
@@ -534,18 +535,45 @@ class Hyara(PluginForm):
         def pretty_hex(data):
             return ' '.join(data[i:i+2] for i in range(0, len(data), 2))
 
+        def rich_header():
+            f = open(GetInputFilePath(),"rb")
+            data = f.read()
+            f.close()
+
+            if data[:2] == b"MZ": # MZ Check
+                size = data[0x3c:0x3c+4]
+                size = struct.unpack("<L", size)[0]
+                if data[:size].find(b"Rich") != -1:
+                    data = data[0x80:size]
+                    xor_key = struct.pack(">I",(struct.unpack(">L", data[:0x4])[0] ^ 0x44616e53)) # DanS
+                    find_Rich_string = data.find(b"Rich")
+                    check_Rich_signature = struct.pack(">I", struct.unpack(">L", data[find_Rich_string+4:find_Rich_string+8])[0])
+
+                    if xor_key == check_Rich_signature:
+                        cleardata = b""
+                        for i in range(0, find_Rich_string):
+                            cleardata += struct.pack("B", int(binascii.hexlify(data[i]), 16) ^ int(binascii.hexlify(xor_key[i%4]), 16))
+
+                        return hashlib.md5(cleardata).hexdigest()
+                    else:
+                        return "Not Vaild signature"
+                else:
+                    return "Not Found Rich Signature"
+            else:
+                return "Not Found MZ Signature"
+
         global ruleset_list
         info = idaapi.get_inf_structure()
         if info.is_64bit():
             md = Cs(CS_ARCH_X86, CS_MODE_64)
         elif info.is_32bit():
             md = Cs(CS_ARCH_X86, CS_MODE_32)
-
-        result = ""
+        result = "import \"hash\"\n"
+        result += "import \"pe\"\n\n"
         result += "rule " + self.Variable_name.text() + "\n{\n"
         result += "  meta:\n"
         result += "      tool = \"https://github.com/hy00un/Hyara\"\n"
-        result += "      version = \"" + "1.4" + "\"\n"
+        result += "      version = \"" + "1.5" + "\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
         result += "  strings:\n"
@@ -735,7 +763,10 @@ class Hyara(PluginForm):
             except ValueError: # string option
                 result += "      $" + name + " = " + ruleset_list[name][0]+"\n"
         result += "  condition:\n"
-        result += "      all of them\n"
+        if self.CheckBox4.isChecked():
+            result += "      all of them and hash.md5(pe.rich_signature.clear_data) == \"" + rich_header() + "\"\n"
+        else:
+            result += "      all of them\n"
         result += "}"
         self.TextEdit1.clear()
         self.TextEdit1.insertPlainText(result)
@@ -759,7 +790,7 @@ class Hyara(PluginForm):
 
     def MakeRule(self):
         global StartAddress, EndAddress
-        blacklist = ["unk_", "loc_", "SEH_"]
+        blacklist = ["unk_", "loc_", "SEH_","sub_"]
         start = int(StartAddress.text(), 16)
         end = int(EndAddress.text(), 16)
 
@@ -899,6 +930,8 @@ class Hyara(PluginForm):
         self.CheckBox2 = QCheckBox()
         self.label_3 = QLabel("string option")
         self.CheckBox3 = QCheckBox()
+        self.label_4 = QLabel("rich header")
+        self.CheckBox4 = QCheckBox()
         self.Variable_name = QLineEdit()
         self.label2 = QLabel("Start Address : ")
         # self.StartAddress = QLineEdit()
@@ -928,34 +961,39 @@ class Hyara(PluginForm):
         GL1 = QGridLayout()
         GL1.addWidget(self.label1, 0, 0)
         GL1.addWidget(self.Variable_name, 0, 1)
-        GL1.addWidget(self.label_1 , 0, 2)
-        GL1.addWidget(self.CheckBox1, 0, 3)
-        GL1.addWidget(self.label_2 , 0, 4)
-        GL1.addWidget(self.CheckBox2, 0, 5)
-        GL1.addWidget(self.label_3 , 0, 6)
-        GL1.addWidget(self.CheckBox3, 0, 7)
         layout.addLayout(GL1)
 
         GL2 = QGridLayout()
-        GL2.addWidget(self.label2, 0, 1)
-        GL2.addWidget(StartAddress, 0, 2) # global variable
-        GL2.addWidget(self.PushButton1, 0, 3)
-        GL2.addWidget(self.label3, 0, 4)
-        GL2.addWidget(EndAddress, 0, 5) # global variable
-        GL2.addWidget(self.PushButton2, 0, 6)
+        GL2.addWidget(self.label2, 0, 0)
+        GL2.addWidget(StartAddress, 0, 1) # global variable
+        GL2.addWidget(self.PushButton1, 0, 2)
+        GL2.addWidget(self.label3, 0, 3)
+        GL2.addWidget(EndAddress, 0, 4) # global variable
+        GL2.addWidget(self.PushButton2, 0, 5)
         layout.addLayout(GL2)
+
+        GL3 = QGridLayout()
+        GL3.addWidget(self.label_1 , 0, 0)
+        GL3.addWidget(self.CheckBox1, 0, 1)
+        GL3.addWidget(self.label_2 , 0, 2)
+        GL3.addWidget(self.CheckBox2, 0, 3)
+        GL3.addWidget(self.label_3 , 0, 4)
+        GL3.addWidget(self.CheckBox3, 0, 5)
+        GL3.addWidget(self.label_4 , 0, 6)
+        GL3.addWidget(self.CheckBox4, 0, 7)
+        layout.addLayout(GL3)
 
         layout.addWidget(self.TextEdit1)
 
-        GL3 = QGridLayout()
-        GL3.addWidget(self.MakeButton, 0, 0)
-        GL3.addWidget(self.SaveButton, 0, 1)
-        GL3.addWidget(self.DeleteButton, 0, 2)
-        GL3.addWidget(self.YaraExportButton, 0, 3)
-        GL3.addWidget(self.YaraCheckerButton, 0, 4)
-        GL3.addWidget(self.YaraDetectorButton, 0, 5)
-        GL3.addWidget(self.YaraIconButton, 0, 6)
-        layout.addLayout(GL3)
+        GL4 = QGridLayout()
+        GL4.addWidget(self.MakeButton, 0, 0)
+        GL4.addWidget(self.SaveButton, 0, 1)
+        GL4.addWidget(self.DeleteButton, 0, 2)
+        GL4.addWidget(self.YaraExportButton, 0, 3)
+        GL4.addWidget(self.YaraCheckerButton, 0, 4)
+        GL4.addWidget(self.YaraDetectorButton, 0, 5)
+        GL4.addWidget(self.YaraIconButton, 0, 6)
+        layout.addLayout(GL4)
 
         tableWidget.setRowCount(0)
         tableWidget.setColumnCount(4)

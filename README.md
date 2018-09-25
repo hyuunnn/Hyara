@@ -45,7 +45,7 @@ Hyara: Ctrl + Shift + Y
 assembler_disassembler: Ctrl + Shift + A
 
 ## Features
-### Hyara start screen and 4 options
+### Hyara start screen and 5 options
 - When you run Hyara, it aligns to the right like the above picture and the output window is aligned to the left.
 - Select/Exit button uses IDAViewWrapper api to get the clicked address in IDA View. After done, you have to press it again to finish.
 - After specifying the address, press the "Make" button to show the specified hexadecimal or strings as a result.

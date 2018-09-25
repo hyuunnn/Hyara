@@ -52,9 +52,10 @@ assembler_disassembler: Ctrl + Shift + A
 - When you click "Save", those results will be saved in the table below.
 - Press "Export Yara Rule" to finally create the yararule using variables stored in the privious step.
 - The comment option on the upper right side annotates the assemblies nicely.
-- There is also an option to create a hash of the rich header. (Not available in yara-python)
+- There is also an option to create a hash of the rich header, imphash. (
+The rich header option is not available in yara-python.)
 - The wildcard option works but further development is still on going.
-<img src="images/Hyara_1.png" width="100%">
+<img src="images/Hyara__1.png" width="100%">
 
 ### String option
 - This option is to extract strings within the range user specified.

@@ -45,15 +45,16 @@ Hyara: Ctrl + Shift + Y
 assembler_disassembler: Ctrl + Shift + A
 
 ## Features
-### Hyara start screen and 2 options
+### Hyara start screen and 4 options
 - When you run Hyara, it aligns to the right like the above picture and the output window is aligned to the left.
 - Select/Exit button uses IDAViewWrapper api to get the clicked address in IDA View. After done, you have to press it again to finish.
 - After specifying the address, press the "Make" button to show the specified hexadecimal or strings as a result.
 - When you click "Save", those results will be saved in the table below.
 - Press "Export Yara Rule" to finally create the yararule using variables stored in the privious step.
 - The comment option on the upper right side annotates the assemblies nicely.
+- There is also an option to create a hash of the rich header. (Not available in yara-python)
 - The wildcard option works but further development is still on going.
-<img src="images/Hyara_1.png" width="100%">
+<img src="images/Hyara__1.png" width="100%">
 
 ### String option
 - This option is to extract strings within the range user specified.
@@ -78,7 +79,6 @@ assembler_disassembler: Ctrl + Shift + A
 - When creating rules, be sure to check how the assembly changes when you use wildcards.
 - Normally people uses website to convert assembly but you can check it by using this feature.
 <img src="images/assem_disassembler.png" width="100%">
-
 
 ### Description of "old_version"
 - (old_version/Hyara_Using_simplecustviewer_Choose.py)

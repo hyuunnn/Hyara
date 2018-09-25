@@ -562,6 +562,10 @@ class Hyara(PluginForm):
             else:
                 return "Not Found MZ Signature"
 
+        def imphash():
+            pe = pefile.PE(GetInputFilePath())
+            return pe.get_imphash()
+
         global ruleset_list
         info = idaapi.get_inf_structure()
         if info.is_64bit():
@@ -763,11 +767,13 @@ class Hyara(PluginForm):
             except ValueError: # string option
                 result += "      $" + name + " = " + ruleset_list[name][0]+"\n"
         result += "  condition:\n"
+        result += "      all of them"
         if self.CheckBox4.isChecked():
-            result += "      all of them and hash.md5(pe.rich_signature.clear_data) == \"" + rich_header() + "\"\n"
-        else:
-            result += "      all of them\n"
-        result += "}"
+            result += " and hash.md5(pe.rich_signature.clear_data) == \"" + rich_header() + "\""
+        
+        if self.CheckBox5.isChecked():
+            result += " and pe.imphash() == \"" + imphash() + "\""
+        result += "\n}"
         self.TextEdit1.clear()
         self.TextEdit1.insertPlainText(result)
 
@@ -932,6 +938,8 @@ class Hyara(PluginForm):
         self.CheckBox3 = QCheckBox()
         self.label_4 = QLabel("rich header")
         self.CheckBox4 = QCheckBox()
+        self.label_5 = QLabel("imphash")
+        self.CheckBox5 = QCheckBox()
         self.Variable_name = QLineEdit()
         self.label2 = QLabel("Start Address : ")
         # self.StartAddress = QLineEdit()
@@ -981,6 +989,8 @@ class Hyara(PluginForm):
         GL3.addWidget(self.CheckBox3, 0, 5)
         GL3.addWidget(self.label_4 , 0, 6)
         GL3.addWidget(self.CheckBox4, 0, 7)
+        GL3.addWidget(self.label_5 , 0, 8)
+        GL3.addWidget(self.CheckBox5, 0, 9)
         layout.addLayout(GL3)
 
         layout.addWidget(self.TextEdit1)

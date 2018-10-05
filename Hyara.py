@@ -201,7 +201,10 @@ class YaraIcon(PluginForm):
                             img_size = "0"+img_size
 
                         img_ = "\x00\x00\x01\x00\x01\x00\x30\x30\x00\x00\x01\x00\x08\x00" + bytearray.fromhex(img_size)[::-1] + "\x00\x00\x16\x00\x00\x00"
-                        f = open(GetInputFilePath(),"rb")
+                        try:
+                            f = open(GetInputFilePath().decode("utf-8"),"rb")
+                        except:
+                            f = open(GetInputFilePath(), "rb")
                         f.seek(real_offset)
                         img_ += f.read(size)
                         f.close()
@@ -269,16 +272,15 @@ class YaraChecker(PluginForm):
     def export_csv(self):
         f = open(self.path2.text() + "\\result.csv", 'wb')
         wr = csv.writer(f)
-        wr.writerow(["Path", "Filename", "Address", "Variable_name", "String"])
+        wr.writerow(["Path", "Filename", "Address", "Variable_name"])
         row = self.tableWidget.rowCount()
         #col = self.tableWidget.columnCount()
         
         for i in range(0,row):
-            wr.writerow([self.tableWidget.item(i,0).text(),
-                            self.tableWidget.item(i,1).text(),
-                            self.tableWidget.item(i,2).text(),
-                            self.tableWidget.item(i,3).text(),
-                            self.tableWidget.item(i,4).text(),
+            wr.writerow([self.tableWidget.item(i,0).text().encode("utf-8"),
+                            self.tableWidget.item(i,1).text().encode("utf-8"),
+                            self.tableWidget.item(i,2).text().encode("utf-8"),
+                            self.tableWidget.item(i,3).text().encode("utf-8")
                     ])
         f.close()
         print("[*] Export csv file Complete.")
@@ -352,7 +354,7 @@ class YaraChecker(PluginForm):
             self.parent = self.FormToPySideWidget(form)
         self.label1 = QLabel("Folder Path : ")
         self.path = QLineEdit()
-        self.PathButton = QPushButton("path")
+        self.PathButton = QPushButton("Path")
         self.PathButton.clicked.connect(self.choose_path)        
         self.label2 = QLabel("Yara rule")
         self.TextEdit1 = QPlainTextEdit()
@@ -360,17 +362,17 @@ class YaraChecker(PluginForm):
                                             font-family:'Consolas';}""")
         self.highlighter = YaraHighlighter(self.TextEdit1.document())
         self.CheckButton = QCheckBox()
-        self.label5 = QLabel("Recursive option")
+        self.label5 = QLabel("Recursive Option")
         self.TextEdit1.insertPlainText(self.data)
         self.SearchButton = QPushButton("Search")
         self.SearchButton.clicked.connect(self.Search)
         self.label3 = QLabel("Detect Count : ")
         self.label4 = QLabel("0")
         self.path2 = QLineEdit()
-        self.PathButton2 = QPushButton("path")
+        self.PathButton2 = QPushButton("Path")
         self.PathButton2.clicked.connect(self.choose_path2)
         self.EnterButton = QPushButton("Enter")
-        self.PathButton2.clicked.connect(self.export_csv)
+        self.EnterButton.clicked.connect(self.export_csv)
 
         self.layout = QVBoxLayout()
         GL1 = QGridLayout()
@@ -397,7 +399,7 @@ class YaraChecker(PluginForm):
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(5)
-        self.tableWidget.setHorizontalHeaderLabels(["Path", "Filename", "Address", "Variable_name", "String"])
+        self.tableWidget.setHorizontalHeaderLabels(["Path", "Filename", "Address", "Variable name", "String"])
         header = self.tableWidget.horizontalHeader()
         header.sectionClicked.connect(self.SortingTable)
         self.layout.addWidget(self.tableWidget)
@@ -418,20 +420,24 @@ class YaraDetector(PluginForm):
 
     def Search(self):
         result = []
-        rulepath = open(self.path.text(), "r")
-        rule = yara.compile(source=rulepath.read())
-        rulepath.close()
+        if self.CheckButton.isChecked():
+            rule = yara.compile(source=self.rule)
+        else:
+            rulepath = open(self.path.text(), "r")
+            rule = yara.compile(source=rulepath.read())
+            rulepath.close()
         
         matches = rule.match(data=self.data)
         for match in matches:
             for i in match.strings:
-                result.append([hex(i[0]).replace("L",""), i[1], i[2]])
+                result.append([hex(i[0]).replace("L",""), match.rule, i[1], i[2]])
 
         self.tableWidget.setRowCount(len(result))
         
         for idx, i in enumerate(result):
             self.tableWidget.setItem(idx, 0, QTableWidgetItem(hex(int(i[0], 16)).replace("L","")))
             self.tableWidget.setItem(idx, 1, QTableWidgetItem(i[1]))
+            self.tableWidget.setItem(idx, 2, QTableWidgetItem(i[2]))
             text_endea = idaapi.get_segm_by_name(".text").endEA
             size = idaapi.get_fileregion_ea(int(i[0], 16))
 
@@ -443,11 +449,11 @@ class YaraDetector(PluginForm):
                 elif info.is_32bit():
                     md = Cs(CS_ARCH_X86, CS_MODE_32)
 
-                for i in md.disasm(i[2], 0x1000):
+                for i in md.disasm(i[3], 0x1000):
                     a.append(i.mnemonic + " " + i.op_str)
-                self.tableWidget.setItem(idx, 2, QTableWidgetItem(' || '.join(a)))
+                self.tableWidget.setItem(idx, 3, QTableWidgetItem(' || '.join(a)))
             else:
-                self.tableWidget.setItem(idx, 2, QTableWidgetItem(i[2]))
+                self.tableWidget.setItem(idx, 3, QTableWidgetItem(i[3]))
 
         self.layout.addWidget(self.tableWidget)
 
@@ -482,6 +488,8 @@ class YaraDetector(PluginForm):
         self.label1 = QLabel("Yara Path : ")
         self.PathButton = QPushButton("Yara File")
         self.PathButton.clicked.connect(self.choose_path)
+        self.label2 = QLabel("Hyara Rule")
+        self.CheckButton = QCheckBox()
         self.SearchButton = QPushButton("Search")
         self.SearchButton.clicked.connect(self.Search)
 
@@ -490,14 +498,16 @@ class YaraDetector(PluginForm):
         GL1.addWidget(self.label1, 0, 0)
         GL1.addWidget(self.path, 0, 1)
         GL1.addWidget(self.PathButton, 0, 2)
+        GL1.addWidget(self.label2, 0, 3)
+        GL1.addWidget(self.CheckButton, 0, 4)
         self.layout.addLayout(GL1)
         self.layout.addWidget(self.SearchButton)
 
         self.tableWidget = QTableWidget()
         self.tableWidget.cellClicked.connect(self.jump_addr)
         self.tableWidget.setRowCount(0)
-        self.tableWidget.setColumnCount(3)
-        self.tableWidget.setHorizontalHeaderLabels(["Address", "Variable_name", "String"])
+        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setHorizontalHeaderLabels(["Address", "Rule name", "Variable name", "String"])
         self.layout.addWidget(self.tableWidget)
 
         self.parent.setLayout(self.layout)
@@ -536,7 +546,10 @@ class Hyara(PluginForm):
             return ' '.join(data[i:i+2] for i in range(0, len(data), 2))
 
         def rich_header():
-            f = open(GetInputFilePath(),"rb")
+            try:
+                f = open(GetInputFilePath().decode("utf-8"), "rb")
+            except:
+                f = open(GetInputFilePath(), "rb")
             data = f.read()
             f.close()
 
@@ -563,7 +576,10 @@ class Hyara(PluginForm):
                 return "Not Found MZ Signature"
 
         def imphash():
-            pe = pefile.PE(GetInputFilePath())
+            try:
+                pe = pefile.PE(GetInputFilePath().decode("utf-8"))
+            except:
+                pe = pefile.PE(GetInputFilePath())
             return pe.get_imphash()
 
         global ruleset_list
@@ -577,7 +593,7 @@ class Hyara(PluginForm):
         result += "rule " + self.Variable_name.text() + "\n{\n"
         result += "  meta:\n"
         result += "      tool = \"https://github.com/hy00un/Hyara\"\n"
-        result += "      version = \"" + "1.5" + "\"\n"
+        result += "      version = \"" + "1.6" + "\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
         result += "  strings:\n"
@@ -920,6 +936,7 @@ class Hyara(PluginForm):
 
     def YaraDetector(self):
         self.YaraDetector = YaraDetector()
+        self.YaraDetector.rule = self.TextEdit1.toPlainText()
         self.YaraDetector.Show("YaraDetector")
 
     def OnCreate(self, form):
@@ -929,7 +946,7 @@ class Hyara(PluginForm):
             self.parent = self.FormToPyQtWidget(form)
         except:
             self.parent = self.FormToPySideWidget(form)
-        self.label1 = QLabel("Variable name : ")
+        self.label1 = QLabel("Variable Name : ")
         self.label_1 = QLabel("comment option")
         self.CheckBox1 = QCheckBox()
         self.label_2 = QLabel("wildcard option")

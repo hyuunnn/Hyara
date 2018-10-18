@@ -547,33 +547,12 @@ class Hyara(PluginForm):
 
         def rich_header():
             try:
-                f = open(GetInputFilePath().decode("utf-8"), "rb")
+                pe = pefile.PE(GetInputFilePath().decode("utf-8"))
             except:
-                f = open(GetInputFilePath(), "rb")
-            data = f.read()
-            f.close()
+                pe = pefile.PE(GetInputFilePath())
 
-            if data[:2] == b"MZ": # MZ Check
-                size = data[0x3c:0x3c+4]
-                size = struct.unpack("<L", size)[0]
-                if data[:size].find(b"Rich") != -1:
-                    data = data[0x80:size]
-                    xor_key = struct.pack(">I",(struct.unpack(">L", data[:0x4])[0] ^ 0x44616e53)) # DanS
-                    find_Rich_string = data.find(b"Rich")
-                    check_Rich_signature = struct.pack(">I", struct.unpack(">L", data[find_Rich_string+4:find_Rich_string+8])[0])
-
-                    if xor_key == check_Rich_signature:
-                        cleardata = b""
-                        for i in range(0, find_Rich_string):
-                            cleardata += struct.pack("B", int(binascii.hexlify(data[i]), 16) ^ int(binascii.hexlify(xor_key[i%4]), 16))
-
-                        return hashlib.md5(cleardata).hexdigest()
-                    else:
-                        return "Not Vaild signature"
-                else:
-                    return "Not Found Rich Signature"
-            else:
-                return "Not Found MZ Signature"
+            rich_header = pe.parse_rich_header()
+            return hashlib.md5(rich_header['clear_data']).hexdigest()
 
         def imphash():
             try:

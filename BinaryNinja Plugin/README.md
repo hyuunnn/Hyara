@@ -25,3 +25,19 @@ https://docs.binary.ninja/getting-started.html#settings (settings.json)
 ## License
 This plugin is released under a [MIT](LICENSE) license.
 
+## Reference
+<a href="https://api.binary.ninja/">https://api.binary.ninja/</a>
+
+<a href="https://github.com/Vector35/binaryninja-api/tree/dev/python/examples">https://github.com/Vector35/binaryninja-api/tree/dev/python/examples</a>
+
+<a href="https://github.com/Vector35/community-plugins">https://github.com/Vector35/community-plugins</a>
+
+<a href="https://github.com/gaasedelen/lighthouse">https://github.com/gaasedelen/lighthouse</a>
+
+<a href="https://github.com/pbiernat/ripr">https://github.com/pbiernat/ripr</a>
+
+<a href="https://github.com/rootbsd/binaryninja_plugins">https://github.com/rootbsd/binaryninja_plugins</a>
+
+<a href="https://youtu.be/L2xYV9WLVoE">https://youtu.be/L2xYV9WLVoE</a>
+
+<a href="https://github.com/Alex3434/Binja-SigMaker">https://github.com/Alex3434/Binja-SigMaker</a> (JumpTo : bv.file.navigate(bv.file.view, addr))

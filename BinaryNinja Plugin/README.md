@@ -14,7 +14,7 @@ This plugin requires the following minimum version of Binary Ninja:
  * release - 9999
 
 
-## Required Dependencies
+## Settings
 
 https://docs.binary.ninja/getting-started.html#settings (settings.json)
 

@@ -85,5 +85,10 @@ assembler_disassembler: Ctrl + Shift + A
 - This version uses Choose and simplecustviewer.
 <img src="images/Hyara_old.png" width="100%">
 
+## Binary Ninja
+- The Binary ninja plugin made the tool simple.
+- I will make it elaborate using PyQt5 in the future.
+<img src="images/binja.png" width="100%">
+
 ## Special Thanks
 - <a href="https://twitter.com/kjkwak12">kjkwak12</a>

@@ -1,6 +1,7 @@
 from idaapi import *
 from PIL import Image
 from PIL.ImageQt import ImageQt
+from collections import OrderedDict
 
 if idaapi.IDA_SDK_VERSION >= 700:
     ida7_version = 1
@@ -874,6 +875,8 @@ class Hyara(PluginForm):
                 count += 1
         else:
             ruleset_list[self.Variable_name.text()] = [self.TextEdit1.toPlainText(), StartAddress.text(), EndAddress.text()]
+        
+        ruleset_list = OrderedDict(sorted(ruleset_list.items(), key=lambda x: x[0]))
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)
         tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])

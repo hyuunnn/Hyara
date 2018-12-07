@@ -573,7 +573,7 @@ class Hyara(PluginForm):
         result += "rule " + self.Variable_name.text() + "\n{\n"
         result += "  meta:\n"
         result += "      tool = \"https://github.com/hy00un/Hyara\"\n"
-        result += "      version = \"" + "1.6" + "\"\n"
+        result += "      version = \"" + "1.7" + "\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
         result += "  strings:\n"

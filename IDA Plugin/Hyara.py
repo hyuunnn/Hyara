@@ -34,8 +34,24 @@ import hashlib
 from functools import partial
 from os.path import expanduser
 
+def table_click(row, column):
+    variable_name = tableWidget.item(row, 0).text()
+    if idaapi.ask_yn(idaapi.ASKBTN_NO, "Delete Yara Rule : " + variable_name) == idaapi.ASKBTN_YES:
+        del ruleset_list[variable_name]
+        tableWidget.setRowCount(len(ruleset_list.keys()))
+        tableWidget.setColumnCount(4)
+        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        for idx, name in enumerate(ruleset_list.keys()):
+            tableWidget.setItem(idx, 0, QTableWidgetItem(name))
+            tableWidget.setItem(idx, 1, QTableWidgetItem(ruleset_list[name][0]))
+            tableWidget.setItem(idx, 2, QTableWidgetItem(ruleset_list[name][1]))
+            tableWidget.setItem(idx, 3, QTableWidgetItem(ruleset_list[name][2]))
+        layout.addWidget(tableWidget)
+
 ruleset_list = {}
 tableWidget = QTableWidget()
+tableWidget.cellDoubleClicked.connect(table_click)
+
 layout = QVBoxLayout()
 StartAddress = QLineEdit()
 EndAddress = QLineEdit()
@@ -573,7 +589,7 @@ class Hyara(PluginForm):
         result += "rule " + self.Variable_name.text() + "\n{\n"
         result += "  meta:\n"
         result += "      tool = \"https://github.com/hy00un/Hyara\"\n"
-        result += "      version = \"" + "1.7" + "\"\n"
+        result += "      version = \"" + "1.8" + "\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
         result += "  strings:\n"
@@ -775,11 +791,10 @@ class Hyara(PluginForm):
 
     def DeleteRule(self):
         global ruleset_list, tableWidget, layout
-        try:
-            if idaapi.ask_yn(idaapi.ASKBTN_NO, "Delete Yara Rule"):
-                ruleset_list = {}
-        except:
+
+        if idaapi.ask_yn(idaapi.ASKBTN_NO, "Delete Yara Rule") == idaapi.ASKBTN_YES:
             ruleset_list = {}
+
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)
         tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])

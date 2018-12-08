@@ -276,7 +276,9 @@ class YaraChecker(PluginForm):
             "Open a folder",
             expanduser("~"),
             QFileDialog.ShowDirsOnly)
-        self.path.setText(path)
+
+        if path:
+            self.path.setText(path)
 
     def choose_path2(self):
         path = QFileDialog.getExistingDirectory(
@@ -284,7 +286,9 @@ class YaraChecker(PluginForm):
             "Open a folder",
             expanduser("~"),
             QFileDialog.ShowDirsOnly)
-        self.path2.setText(path)
+
+        if path:
+            self.path2.setText(path)
 
     def export_csv(self):
         f = open(self.path2.text() + "\\result.csv", 'wb')
@@ -433,7 +437,9 @@ class YaraDetector(PluginForm):
             "Open a file",
             expanduser("~"),
             "Yara Rule Files(*.yar *.yara)")
-        self.path.setText(path[0])
+
+        if path:
+            self.path.setText(path[0])
 
     def Search(self):
         result = []

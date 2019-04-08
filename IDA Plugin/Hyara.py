@@ -530,7 +530,7 @@ class YaraDetector(PluginForm):
         self.tableWidget.cellClicked.connect(self.jump_addr)
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(4)
-        self.tableWidget.setHorizontalHeaderLabels(["Address", "Rule name", "Variable Name", "String"])
+        self.tableWidget.setHorizontalHeaderLabels(["Address", "Rule Name", "Variable Name", "String"])
         self.layout.addWidget(self.tableWidget)
 
         self.parent.setLayout(self.layout)

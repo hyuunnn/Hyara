@@ -40,7 +40,7 @@ def table_click(row, column):
         del ruleset_list[variable_name]
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        tableWidget.setHorizontalHeaderLabels(["Variable Name", "Rule", "Start", "End"])
         for idx, name in enumerate(ruleset_list.keys()):
             tableWidget.setItem(idx, 0, QTableWidgetItem(name))
             tableWidget.setItem(idx, 1, QTableWidgetItem(ruleset_list[name][0]))
@@ -147,7 +147,7 @@ class YaraIcon(PluginForm):
         ruleset_list[self.LineEdit3.text()] = ["{" + binascii.hexlify(data_).upper() + "}", hex(int(self.LineEdit1.text(),16)), hex(int(self.LineEdit1.text(),16) + int(self.LineEdit2.text(),10))]
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        tableWidget.setHorizontalHeaderLabels(["Variable Name", "Rule", "Start", "End"])
         for idx, name in enumerate(ruleset_list.keys()):
             tableWidget.setItem(idx, 0, QTableWidgetItem(name))
             tableWidget.setItem(idx, 1, QTableWidgetItem(ruleset_list[name][0]))
@@ -179,7 +179,7 @@ class YaraIcon(PluginForm):
         self.PushButton_list = []
         self.label1 = QLabel("Start Offset : ")
         self.label2 = QLabel("Length : ")
-        self.label3 = QLabel("Variable name : ")
+        self.label3 = QLabel("Variable Name : ")
         self.label4 = QLabel("Icon Size")
         icon1 = QLabel("Icon")
         icon1.setAlignment(Qt.AlignCenter)
@@ -293,7 +293,7 @@ class YaraChecker(PluginForm):
     def export_csv(self):
         f = open(self.path2.text() + "\\result.csv", 'wb')
         wr = csv.writer(f)
-        wr.writerow(["Path", "Filename", "Address", "Variable_name"])
+        wr.writerow(["Path", "Filename", "Address", "Variable Name"])
         row = self.tableWidget.rowCount()
         #col = self.tableWidget.columnCount()
         
@@ -420,7 +420,7 @@ class YaraChecker(PluginForm):
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(5)
-        self.tableWidget.setHorizontalHeaderLabels(["Path", "Filename", "Address", "Variable name", "String"])
+        self.tableWidget.setHorizontalHeaderLabels(["Path", "Filename", "Address", "Variable Name", "String"])
         header = self.tableWidget.horizontalHeader()
         header.sectionClicked.connect(self.SortingTable)
         self.layout.addWidget(self.tableWidget)
@@ -530,7 +530,7 @@ class YaraDetector(PluginForm):
         self.tableWidget.cellClicked.connect(self.jump_addr)
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(4)
-        self.tableWidget.setHorizontalHeaderLabels(["Address", "Rule name", "Variable name", "String"])
+        self.tableWidget.setHorizontalHeaderLabels(["Address", "Rule name", "Variable Name", "String"])
         self.layout.addWidget(self.tableWidget)
 
         self.parent.setLayout(self.layout)
@@ -803,7 +803,7 @@ class Hyara(PluginForm):
 
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        tableWidget.setHorizontalHeaderLabels(["Variable Name", "Rule", "Start", "End"])
         for idx, name in enumerate(ruleset_list.keys()):
             tableWidget.setItem(idx, 0, QTableWidgetItem(name))
             tableWidget.setItem(idx, 1, QTableWidgetItem(ruleset_list[name][0]))
@@ -900,7 +900,7 @@ class Hyara(PluginForm):
         ruleset_list = OrderedDict(sorted(ruleset_list.items(), key=lambda x: x[0]))
         tableWidget.setRowCount(len(ruleset_list.keys()))
         tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        tableWidget.setHorizontalHeaderLabels(["Variable Name", "Rule", "Start", "End"])
         for idx, name in enumerate(ruleset_list.keys()):
             tableWidget.setItem(idx, 0, QTableWidgetItem(name))
             tableWidget.setItem(idx, 1, QTableWidgetItem(ruleset_list[name][0]))
@@ -1027,7 +1027,7 @@ class Hyara(PluginForm):
 
         tableWidget.setRowCount(0)
         tableWidget.setColumnCount(4)
-        tableWidget.setHorizontalHeaderLabels(["Variable_name", "Rule", "Start", "End"])
+        tableWidget.setHorizontalHeaderLabels(["Variable Name", "Rule", "Start", "End"])
         layout.addWidget(tableWidget)
 
         self.parent.setLayout(layout)

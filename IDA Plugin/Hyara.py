@@ -598,7 +598,9 @@ class Hyara(PluginForm):
         result += "      version = \"" + "1.8" + "\"\n"
         result += "      date = \"" + time.strftime("%Y-%m-%d") + "\"\n"
         result += "      MD5 = \"" + GetInputFileMD5() + "\"\n"
-        result += "  strings:\n"
+        if not len(ruleset_list.keys()) == 0:
+            result += "  strings:\n"
+
         for name in ruleset_list.keys():
             try:
                 CODE = bytearray.fromhex(ruleset_list[name][0][1:-1].strip().replace("\\x"," "))

@@ -5,7 +5,7 @@ You can designate the start and end addresses to automatically create rules.
 
 It is created based on GUI, and adding features and improvements are currently underway.
 
-Support for Ghidra and Binary Ninja are in development.
+Support for Ghidra, Cutter and Binary Ninja are in development.
 
 ## DEMO
 

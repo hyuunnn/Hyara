@@ -1,4 +1,4 @@
-from idaapi import PluginForm
+import idaapi
 
 try:
     from PyQt5.QtCore import *
@@ -14,7 +14,7 @@ from capstone import *
 from keystone import *
 
 
-class Tools(PluginForm):
+class Tools(idaapi.PluginForm):
 
     def disassembler(self):
         CODE = bytearray.fromhex(self.Disassembler1.toPlainText().replace("\\x"," "))

@@ -1,5 +1,5 @@
 yara-python==3.8.1
-Pillow==5.2.0
+Pillow==6.2.0
 pefile==2018.8.8
 keystone-engine==0.9.1
 capstone==3.0.5rc2

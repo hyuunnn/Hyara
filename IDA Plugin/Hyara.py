@@ -1,14 +1,7 @@
-import idaapi
-import idc
-import idautils
+import idaapi, idc, idautils, ida_nalt
 from PIL import Image
 from PIL.ImageQt import ImageQt
 from collections import OrderedDict
-
-if idaapi.IDA_SDK_VERSION >= 700:
-    ida7_version = 1
-else:
-    ida7_version = 0
 
 try:
     from PyQt5.QtCore import *
@@ -66,19 +59,19 @@ def get_string(addr):
 
     if "text \"UTF-16LE\"" in assem_data or "unicode 0," in assem_data:
         while True:
-            if idc.Byte(addr) == 0 and idc.Byte(addr+1) == 0:
+            if idc.get_wide_byte(addr) == 0 and idc.get_wide_byte(addr+1) == 0:
                 addr += 2
                 break
             else:
-                out += chr(idc.Byte(addr))
-                out += chr(idc.Byte(addr+1))
+                out += chr(idc.get_wide_byte(addr))
+                out += chr(idc.get_wide_byte(addr+1))
             addr += 2
         return out.decode("utf-16le"), addr
 
     else:
         while True:
-            if idc.Byte(addr) != 0:
-                out += chr(idc.Byte(addr))
+            if idc.get_wide_byte(addr) != 0:
+                out += chr(idc.get_wide_byte(addr))
             else:
                 addr += 1
                 break
@@ -168,9 +161,9 @@ class YaraIcon(idaapi.PluginForm):
             self.parent = self.FormToPySideWidget(form)
 
         try:
-            self.pe = pefile.PE(idc.GetInputFilePath().decode("utf-8"))
+            self.pe = pefile.PE(ida_nalt.get_input_file_path().decode("utf-8"))
         except:
-            self.pe = pefile.PE(idc.GetInputFilePath())
+            self.pe = pefile.PE(ida_nalt.get_input_file_path())
         self.EntryPoint = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
         self.ImageBase = self.pe.OPTIONAL_HEADER.ImageBase
         self.section_list = {}
@@ -220,9 +213,9 @@ class YaraIcon(idaapi.PluginForm):
 
                         img_ = "\x00\x00\x01\x00\x01\x00\x30\x30\x00\x00\x01\x00\x08\x00" + bytearray.fromhex(img_size)[::-1] + "\x00\x00\x16\x00\x00\x00"
                         try:
-                            f = open(idc.GetInputFilePath().decode("utf-8"),"rb")
+                            f = open(ida_nalt.get_input_file_path().decode("utf-8"),"rb")
                         except:
-                            f = open(idc.GetInputFilePath(), "rb")
+                            f = open(ida_nalt.get_input_file_path(), "rb")
                         f.seek(real_offset)
                         img_ += f.read(size)
                         f.close()
@@ -495,9 +488,9 @@ class YaraDetector(idaapi.PluginForm):
 
     def OnCreate(self, form):
         try:
-            f = open(idc.GetInputFilePath().decode("utf-8"), "rb")
+            f = open(ida_nalt.get_input_file_path().decode("utf-8"), "rb")
         except:
-            f = open(idc.GetInputFilePath(), "rb")
+            f = open(ida_nalt.get_input_file_path(), "rb")
         self.data = f.read()
         f.close()
 
@@ -551,12 +544,8 @@ class Wrapper(idaapi.IDAViewWrapper):
 
         line = idaapi.get_custom_viewer_curline(widget, from_mouse)
         line = line[line.find(":")+len(":"):]
-        if ida7_version == 1:
-            line = binascii.hexlify(line).split("2002")[0]
-            line = binascii.unhexlify(line)
-        else:
-            line = binascii.hexlify(line).split("0213")[0]
-            line = binascii.unhexlify(line)
+        line = binascii.hexlify(line).split("2002")[0]
+        line = binascii.unhexlify(line)
         
         if self.num == "1":
             StartAddress.setText(line)
@@ -571,18 +560,18 @@ class Hyara(idaapi.PluginForm):
 
         def rich_header():
             try:
-                pe = pefile.PE(idc.GetInputFilePath().decode("utf-8"))
+                pe = pefile.PE(ida_nalt.get_input_file_path().decode("utf-8"))
             except:
-                pe = pefile.PE(idc.GetInputFilePath())
+                pe = pefile.PE(ida_nalt.get_input_file_path())
 
             rich_header = pe.parse_rich_header()
             return hashlib.md5(rich_header['clear_data']).hexdigest()
 
         def imphash():
             try:
-                pe = pefile.PE(idc.GetInputFilePath().decode("utf-8"))
+                pe = pefile.PE(ida_nalt.get_input_file_path().decode("utf-8"))
             except:
-                pe = pefile.PE(idc.GetInputFilePath())
+                pe = pefile.PE(ida_nalt.get_input_file_path())
             return pe.get_imphash()
 
         global ruleset_list
@@ -827,19 +816,19 @@ class Hyara(idaapi.PluginForm):
 
             if text_section_endEA > start:
                 while start <= end:
-                    if "offset" in idc.GetOpnd(start, 0) and not any(i in idc.GetOpnd(start, 0) for i in blacklist):
-                        variable = idc.GetOpnd(start, 0).split(" ")[1]
+                    if "offset" in idc.print_operand(start, 0) and not any(i in idc.print_operand(start, 0) for i in blacklist):
+                        variable = idc.print_operand(start, 0).split(" ")[1]
                         add = idc.get_name_ea(start,variable)
                         string, endEA = get_string(add)
                         StringData.append(string)
 
-                    elif "offset" in idc.GetOpnd(start, 1) and not any(i in idc.GetOpnd(start, 1) for i in blacklist):
-                        variable = idc.GetOpnd(start, 1).split(" ")[1]
+                    elif "offset" in idc.print_operand(start, 1) and not any(i in idc.print_operand(start, 1) for i in blacklist):
+                        variable = idc.print_operand(start, 1).split(" ")[1]
                         add = idc.get_name_ea(start,variable)
                         string, endEA = get_string(add)
                         StringData.append(string)
                     
-                    start = idc.NextHead(start)
+                    start = idc.next_head(start)
 
                 StringData = [x for x in StringData if x]
                 self.TextEdit1.clear()
@@ -873,8 +862,8 @@ class Hyara(idaapi.PluginForm):
         else:
             ByteCode = []
             while start <= end:
-                sub_end = idc.NextHead(start)
-                data = binascii.hexlify(idc.GetManyBytes(start, sub_end-start))
+                sub_end = idc.next_head(start)
+                data = binascii.hexlify(idc.get_bytes(start, sub_end-start))
                 ByteCode.append(data)
                 start = sub_end
 
@@ -1062,7 +1051,7 @@ class YaraPlugin(idaapi.plugin_t):
                 if widget_OW:
                     set_dock_pos("Output window", "Functions window", DP_BOTTOM)
         except:
-            print "find_widget option is available version 7.0 or later"
+            print("find_widget option is available version 7.0 or later")
         
 
     def term(self):

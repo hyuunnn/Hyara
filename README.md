@@ -1,50 +1,29 @@
-# Hyara (IDA Plugin)
-Hyara is IDA Plugin that provides convenience when writing yararule.
+# Hyara
+Hyara is Plugin that provides convenience when writing yararule.
 
 You can designate the start and end addresses to automatically create rules.
 
 It is created based on GUI, and adding features and improvements are currently underway.
 
-Support for Ghidra, Cutter and Binary Ninja are in development.
+IDA Pro, Cutter and BinaryNinja are supported.
 
 ## DEMO
 
 <a href="https://youtu.be/zgL4BkQJZ-w">Youtube Link</a>
 
-## Test Environment
-
-IDA Pro 6.8 ~ 7.0
-
-Python 2.7.13
-
-capstone 3.0.5rc2
-
-keystone 0.9.1
-
-yara-python 3.8.1
-
-pefile 2017.11.5
-
-Pillow 5.2.0
 
 ## Installation
 
 $ pip install -r requirements.txt
 
-(if error occurs during the installation of capstone or keystone, go to the installation page for each libarary and use the installation files)
+copy Hyara_IDA.py and hyara_lib folder to (IDA Pro installation directory)/plugins
 
-(https://www.capstone-engine.org/download.html)
+copy Hyara_Cutter.py and hyara_lib folder to (Cutter Plugin directory)/python
 
-(http://www.keystone-engine.org/download/)
-
-copy Hyara.py to (IDA Pro installation directory)/plugins
-
-copy assembler_disassembler.py to (IDA Pro installation directory)/plugins
+copy Hyara_BinaryNinja.py and hyara_lib folder to BinaryNinja Plugin directory
 
 ## Hotkeys
-Hyara: Ctrl + Shift + Y
-
-assembler_disassembler: Ctrl + Shift + A
+Hyara: Ctrl + Shift + Y (Just IDA Pro)
 
 ## Features
 ### Hyara start screen and 5 options
@@ -78,20 +57,11 @@ assembler_disassembler: Ctrl + Shift + A
 - "YaraIcon" provides the convenience when you write the rule with Icon.
 <img src="images/Hyara_4.png" width="100%">
 
-### assem_disassembler
-- When creating rules, be sure to check how the assembly changes when you use wildcards.
-- Normally people uses website to convert assembly but you can check it by using this feature.
-<img src="images/assem_disassembler.png" width="100%">
-
-### Description of "old_version"
-- (old_version/Hyara_Using_simplecustviewer_Choose.py)
-- This version uses Choose and simplecustviewer.
-<img src="images/Hyara_old.png" width="100%">
-
 ## Binary Ninja
-- The Binary ninja plugin made the tool simple.
-- I will make it elaborate using PyQt5 in the future.
-<img src="images/binja.png" width="100%">
+<img src="images/binja_0.png" width="100%">
+
+## Cutter
+<img src="images/cutter_0.png" width="100%">
 
 ## Special Thanks
 - <a href="https://twitter.com/kjkwak12">kjkwak12</a>

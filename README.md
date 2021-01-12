@@ -16,7 +16,9 @@ YaraChecker, YaraDetector and YaraIcon are being developed using the code of the
 
 ## Installation
 
-$ pip install -r requirements.txt
+(IDA Pro, BinaryNinja)$ pip install -r requirements.txt
+
+(Cutter)$ python3.6 -m pip install -I -t (Cutter installation directory)\python36\site-packages -r requirements.txt
 
 copy ``Hyara_IDA.py and hyara_lib folder`` to (IDA Pro installation directory)/plugins
 

@@ -63,7 +63,7 @@ Hyara: Ctrl + Shift + Y (Just IDA Pro)
 <img src="images/binja_0.png" width="100%">
 
 ## Cutter
-<img src="images/cutter_0.png" width="100%">
+<img src="images/cutter__0.png" width="100%">
 
 ## Special Thanks
 - <a href="https://twitter.com/kjkwak12">kjkwak12</a>

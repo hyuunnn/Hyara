@@ -20,7 +20,7 @@ $ pip install -r requirements.txt
 
 copy ``Hyara_IDA.py and hyara_lib folder`` to (IDA Pro installation directory)/plugins
 
-copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to (Cutter Plugin directory)/python
+copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to (Cutter Plugin directory)/python/Hyara
 
 copy ``Hyara_BinaryNinja.py and hyara_lib folder`` to BinaryNinja Plugin directory
 

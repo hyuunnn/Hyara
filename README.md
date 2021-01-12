@@ -18,11 +18,11 @@ YaraChecker, YaraDetector and YaraIcon are being developed using the code of the
 
 $ pip install -r requirements.txt
 
-copy Hyara_IDA.py and hyara_lib folder to (IDA Pro installation directory)/plugins
+copy ``Hyara_IDA.py and hyara_lib folder`` to (IDA Pro installation directory)/plugins
 
-copy Hyara_Cutter.py and hyara_lib folder to (Cutter Plugin directory)/python
+copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to (Cutter Plugin directory)/python
 
-copy Hyara_BinaryNinja.py and hyara_lib folder to BinaryNinja Plugin directory
+copy ``Hyara_BinaryNinja.py and hyara_lib folder`` to BinaryNinja Plugin directory
 
 ## Hotkeys
 Hyara: Ctrl + Shift + Y (Just IDA Pro)

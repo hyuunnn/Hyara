@@ -7,6 +7,8 @@ It is created based on GUI, and adding features and improvements are currently u
 
 IDA Pro, Cutter and BinaryNinja are supported.
 
+YaraChecker, YaraDetector and YaraIcon are being developed using the code of the previous project.
+
 ## DEMO
 
 <a href="https://youtu.be/zgL4BkQJZ-w">Youtube Link</a>

@@ -3,9 +3,9 @@ import PySide2.QtWidgets as QtWidgets
 import cutter
 
 
-class MyDockWidget(cutter.CutterDockWidget):
+class HyaraWidget(cutter.CutterDockWidget):
     def __init__(self, parent):
-        super(MyDockWidget, self).__init__(parent)
+        super(HyaraWidget, self).__init__(parent)
         self.setObjectName("Hyara")
         self.setWindowTitle("Hyara")
 
@@ -15,7 +15,7 @@ class MyDockWidget(cutter.CutterDockWidget):
         content.setLayout(self.HyaraCutter.layout)
 
 
-class YaraPlugin(cutter.CutterPlugin):
+class HyaraPlugin(cutter.CutterPlugin):
     name = "Hyara Plugin"
     description = "Hyara"
     version = "1.0"
@@ -25,7 +25,7 @@ class YaraPlugin(cutter.CutterPlugin):
         pass
 
     def setupInterface(self, main):
-        widget = MyDockWidget(main)
+        widget = HyaraWidget(main)
         main.addPluginDockWidget(widget)
 
     def terminate(self):

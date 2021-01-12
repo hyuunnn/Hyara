@@ -3,7 +3,7 @@ import ida_kernwin
 import idaapi
 
 
-class Hyara(ida_kernwin.PluginForm):
+class HyaraWidget(ida_kernwin.PluginForm):
     def OnCreate(self, form):
         self.parent = self.FormToPyQtWidget(form)
 
@@ -26,7 +26,7 @@ class HyaraPlugin(idaapi.plugin_t):
         return idaapi.PLUGIN_OK
 
     def run(self, arg):
-        plg = Hyara()
+        plg = HyaraWidget()
         plg.Show("Hyara")
         try:
             widget_a = ida_kernwin.find_widget("IDA View-A")

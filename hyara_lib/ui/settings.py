@@ -1,5 +1,5 @@
 try:
-    from PyQt5 import QtWidgets  # QtGui, QtCore
+    from PyQt5 import QtWidgets
 except:
     import PySide2.QtWidgets as QtWidgets
 
@@ -7,7 +7,6 @@ from abc import ABCMeta, abstractmethod
 from ..plugins import yara_checker, yara_detector, yara_icon
 
 import time
-import sys
 
 # Based GUI
 class MainGUI:
@@ -185,7 +184,8 @@ class HyaraGUI(MainGUI):
             result += "      $" + name + " = {" + "".join(value["text"]).upper() + "}\n"
 
         result += "  condition:\n"
-        result += "      all of them"
+        result += "      all of them\n"
+        result += "}"
         return result
 
     def _yara_export_rule(self):
@@ -194,8 +194,7 @@ class HyaraGUI(MainGUI):
             self._result_plaintext.insertPlainText(self._yara_result())
 
     def _yara_checker(self):
-        # yara_checker.YaraChecker()
-        pass
+        yara_checker.YaraChecker(self._result_plaintext.toPlainText())._ui_init()
 
     def _yara_detector(self):
         # yara_detector.YaraDetector()

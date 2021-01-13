@@ -1,71 +1,78 @@
-# Hyara
-Hyara is Plugin that provides convenience when writing yararule.
+# Welcome to Hyara 👋
 
-You can designate the start and end addresses to automatically create rules.
+![Version](https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000)
 
-It is created based on GUI, and adding features and improvements are currently underway.
+> Hyara is a Yara rule generator that supports various disassemblers.
+> 
+> The plugin is currently undergoing a major revision!
 
-IDA Pro and Cutter are supported.
+- [Demo video](https://youtu.be/zgL4BkQJZ-w)
 
-YaraChecker, YaraDetector and YaraIcon are being developed using the code of the previous project.
+## Features
 
-## DEMO
-
-<a href="https://youtu.be/zgL4BkQJZ-w">Youtube Link</a>
-
+- GUI-based
+- Supports BinaryNinja, Cutter, and IDA
+- YaraChecker (WIP)
+  - Tests the yararule on the fly
+  - <img src="images/Hyara_3.png" width="100%">
+- YaraDetector (WIP)
+  - Shows which part is detected in the sample loaded to IDA, and when "Address" is clicked, it moves to the corresponding address on the IDA View.
+  - <img src="images/Hyara__7.png" width="100%">
+- YaraIcon (WIP)
+  - Creates yara rules for icon resources embedded in the PE
+  - <img src="images/Hyara_4.png" width="100%">
 
 ## Installation
 
-(IDA Pro, BinaryNinja)$ pip install -r requirements.txt
+### IDA Pro & BinaryNinja
 
-(Cutter)$ python3.6 -m pip install -I -t (Cutter installation directory)\python36\site-packages -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
-copy ``Hyara_IDA.py and hyara_lib folder`` to (IDA Pro installation directory)/plugins
+- IDA Pro
+  - Activate via Edit -> Plugins -> Hyara (or CTRL+SHIFT+Y)
+- BinaryNinja
+  - <img src="images/binja_0.png" width="100%">
 
-copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to (Cutter Plugin directory)/python/Hyara
+### Cutter
 
-copy ``Hyara_BinaryNinja.py and hyara_lib folder`` to BinaryNinja Plugin directory
+```bash
+python3 -m pip install -I -t $cutter_dir\$cutter_python_version\site-packages -r requirements.txt
+```
 
-## Hotkeys
-Hyara: Ctrl + Shift + Y (Just IDA Pro)
+<img src="images/cutter__0.png" width="100%">
 
-## Features
-### Hyara start screen and 5 options
-- When you run Hyara, it aligns to the right like the above picture and the output window is aligned to the left.
-- Select/Exit button uses IDAViewWrapper api to get the clicked address in IDA View. After done, you have to press it again to finish.
-- After specifying the address, press the "Make" button to show the specified hexadecimal or strings as a result.
-- When you click "Save", those results will be saved in the table below.
-- Press "Export Yara Rule" to finally create the yararule using variables stored in the privious step.
-- The comment option on the upper right side annotates the assemblies nicely.
-- There are also options to create rich header and imphash.
-- If you double-click the table, you can clear the rule.
-- The wildcard option works but further development is still on going.
+## Instructions
+
+### Start Screen and Options
+
+- When you run Hyara, it docks itself to the right and docks the output window to the left.
+- `Select/Exit` button uses the IDAViewWrapper API to get the clicked address in IDA View.
+  - After you've selected the relevant addresses, click it again to toggle the selection behavior.
+- The results are saved in the table below when you click `Save`.
+- After specifying the address, press the `Make` button to show the specified hexadecimal or strings as a result.
+- Double-clicking the table clears all the existing rules.
+- `Export Yara Rule`
+  - Exports the previously created yara rules.
 <img src="images/Hyara__1.png" width="100%">
 
-### String option
-- This option is to extract strings within the range user specified.
+- `Comment Option`
+  - Annotates the instructions next to the condition rule(s.
+- `Rich Header` and `imphash`
+  - Adds rich header and imphash matching to the rule.
+- `String option`
+  - This option extracts strings within the range specified.
+
 <img src="images/Hyara___5.png" width="100%">
 <img src="images/Hyara_6.png" width="100%">
 
-### YaraChecker
-- You can test the yararule you write on the fly.
-- It has general option and recursive option.
-- It also provides table alignment.
-<img src="images/Hyara_3.png" width="100%">
+## Author
 
-### YaraDetector
-- YaraDetector shows which part is detected in the sample loaded to IDA, and when "Address" is clicked, it moves to the corresponding address on the IDA View.
-<img src="images/Hyara__7.png" width="100%">
+👤 **hyuunnn**
 
-### YaraIcon
-- "YaraIcon" provides the convenience when you write the rule with Icon.
-<img src="images/Hyara_4.png" width="100%">
+* Github: [@hyuunnn](https://github.com/hyuunnn)
 
-## Binary Ninja
-<img src="images/binja_0.png" width="100%">
+### Special Thanks
 
-## Cutter
-<img src="images/cutter__0.png" width="100%">
-
-## Special Thanks
-- <a href="https://twitter.com/kjkwak12">kjkwak12</a>
+* Twitter: <a href="https://twitter.com/kjkwak12">kjkwak12</a>

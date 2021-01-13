@@ -2,7 +2,7 @@
 
 ![Version](https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000)
 
-> Hyara is a Yara rule generator that supports various disassemblers.
+> Hyara is plugin that provides convenience when writing yararule.
 > 
 > The plugin is currently undergoing a major revision!
 
@@ -31,15 +31,20 @@ pip install -r requirements.txt
 ```
 
 - IDA Pro
+  - copy ``Hyara_IDA.py and hyara_lib folder`` to $ida_dir/plugins
   - Activate via Edit -> Plugins -> Hyara (or CTRL+SHIFT+Y)
 - BinaryNinja
-  - <img src="images/binja_0.png" width="100%">
+  - copy ``Hyara_BinaryNinja.py and hyara_lib folder`` to BinaryNinja Plugin directory
+  - Activate via View -> Show Hyara
 
 ### Cutter
 
 ```bash
-python3 -m pip install -I -t $cutter_dir\$cutter_python_version\site-packages -r requirements.txt
+python3 -m pip install -I -t $cutter_dir/$cutter_python_version/site-packages -r requirements.txt
 ```
+copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to $cutter_plugin_dir/python/Hyara
+
+Activate via Windows -> Plugins -> Hyara
 
 <img src="images/cutter__0.png" width="100%">
 

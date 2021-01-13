@@ -3,11 +3,10 @@
 ![Version](https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000)
 
 > Hyara is a Yara rule generator that supports various disassemblers.
+> 
 > The plugin is currently undergoing a major revision!
 
-## DEMO
-
-[YouTube Link](https://youtu.be/zgL4BkQJZ-w)
+- [Demo video](https://youtu.be/zgL4BkQJZ-w)
 
 ## Features
 
@@ -54,9 +53,10 @@ python3 -m pip install -I -t $cutter_dir\$cutter_python_version\site-packages -r
 - The results are saved in the table below when you click `Save`.
 - After specifying the address, press the `Make` button to show the specified hexadecimal or strings as a result.
 - Double-clicking the table clears all the existing rules.
+- `Export Yara Rule`
+  - Exports the previously created yara rules.
 <img src="images/Hyara__1.png" width="100%">
 
-- Press `Export Yara Rule` to export the previously created yara rules.
 - `Comment Option`
   - Annotates the instructions next to the condition rule(s.
 - `Rich Header` and `imphash`

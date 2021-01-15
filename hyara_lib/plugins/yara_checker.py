@@ -69,7 +69,7 @@ class YaraChecker(QtWidgets.QDialog):
                         strings = match.strings[0]
                         result[filename] = {
                             "path": self._folder_path.text(),
-                            "addr": str(strings[0]),
+                            "addr": hex(strings[0]),
                             "rule_name": strings[1],
                             "value": strings[2].hex(),
                         }

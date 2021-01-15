@@ -1,6 +1,8 @@
-# Welcome to Hyara 👋
+# Hyara
 
 ![Version](https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000)
+
+<img src="images/Hyara.gif" width="100%">
 
 > Hyara is plugin that provides convenience when writing yararule.
 > 
@@ -8,19 +10,27 @@
 
 - [Demo video](https://youtu.be/zgL4BkQJZ-w)
 
-## Features
+## Instructions
 
-- GUI-based
-- Supports BinaryNinja, Cutter, and IDA
-- YaraChecker (WIP)
-  - Tests the yararule on the fly
-  - <img src="images/Hyara_3.png" width="100%">
-- YaraDetector (WIP)
-  - Shows which part is detected in the sample loaded to IDA, and when "Address" is clicked, it moves to the corresponding address on the IDA View.
-  - <img src="images/Hyara__7.png" width="100%">
-- YaraIcon (WIP)
-  - Creates yara rules for icon resources embedded in the PE
-  - <img src="images/Hyara_4.png" width="100%">
+### Start Screen and Options
+
+- When you run Hyara, it docks itself to the right and docks the output window to the left.
+- The results are saved in the table below when you click `Save`.
+- After specifying the address, press the `Make` button to show the specified hexadecimal or strings as a result.
+- Double-clicking the table clears all the existing rules.
+- `Export Yara Rule`
+  - Exports the previously created yara rules.
+<img src="images/Hyara_1.png" width="100%">
+
+- `Comment Option`
+  - Annotates the instructions next to the condition rule(s.
+- `Rich Header` and `imphash`
+  - Adds rich header and imphash matching to the rule.
+- `String option`
+  - This option extracts strings within the range specified.
+
+<img src="images/Hyara_2.png" width="100%">
+<img src="images/Hyara_3.png" width="100%">
 
 ## Installation
 
@@ -48,29 +58,19 @@ Activate via Windows -> Plugins -> Hyara
 
 <img src="images/cutter__0.png" width="100%">
 
-## Instructions
+## Features
 
-### Start Screen and Options
-
-- When you run Hyara, it docks itself to the right and docks the output window to the left.
-- `Select/Exit` button uses the IDAViewWrapper API to get the clicked address in IDA View.
-  - After you've selected the relevant addresses, click it again to toggle the selection behavior.
-- The results are saved in the table below when you click `Save`.
-- After specifying the address, press the `Make` button to show the specified hexadecimal or strings as a result.
-- Double-clicking the table clears all the existing rules.
-- `Export Yara Rule`
-  - Exports the previously created yara rules.
-<img src="images/Hyara__1.png" width="100%">
-
-- `Comment Option`
-  - Annotates the instructions next to the condition rule(s.
-- `Rich Header` and `imphash`
-  - Adds rich header and imphash matching to the rule.
-- `String option`
-  - This option extracts strings within the range specified.
-
-<img src="images/Hyara___5.png" width="100%">
-<img src="images/Hyara_6.png" width="100%">
+- GUI-based
+- Supports BinaryNinja, Cutter, and IDA
+- YaraChecker
+  - Tests the yararule on the fly
+  - <img src="images/Hyara_4.png" width="100%">
+- YaraDetector
+  - Shows which part is detected in the sample loaded to disassembler, and when "Address" is clicked, it moves to the corresponding address on the disassembler view.
+  - <img src="images/Hyara_5.png" width="100%">
+- YaraIcon
+  - Creates yara rules for icon resources embedded in the PE
+  - <img src="images/Hyara_6.png" width="100%">
 
 ## Author
 

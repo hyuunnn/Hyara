@@ -116,12 +116,12 @@ class YaraIcon(QtWidgets.QDialog):
 
     def _yara_save_icon(self, idx):
         variable_name = self._varable_name.text()
-        rule = self._icon_rule_list[idx].text()
+        rule_text = self._icon_rule_list[idx].text()
         start_offset = int(self._start_offset.text(), 16)
         end = start_offset + int(self._length.text(), 10)
 
         self.rule_list[variable_name] = {
-            "text": rule,
+            "text": rule_text,
             "start": str(start_offset),
             "end": str(end),
             "flag": False,

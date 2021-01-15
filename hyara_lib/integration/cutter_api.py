@@ -1,6 +1,7 @@
 from ..ui.settings import HyaraGUI
 import cutter
 import hashlib
+import pefile
 
 
 class HyaraCutter(HyaraGUI):
@@ -27,6 +28,18 @@ class HyaraCutter(HyaraGUI):
             start += cutter_data[0]["size"]
         return result
 
+    def get_filepath(self) -> str:
+        return cutter.cmdj("ij")["core"]["file"]
+
     def get_md5(self) -> str:
-        filepath = cutter.cmdj("ij")["core"]["file"]
-        return hashlib.md5(open(filepath, "rb").read()).hexdigest()
+        return hashlib.md5(open(self.get_filepath(), "rb").read()).hexdigest()
+
+    def get_imphash(self) -> str:
+        return pefile.PE(self.get_filepath()).get_imphash()
+
+    def get_rich_header(self) -> str:
+        rich_header = pefile.PE(self.get_filepath()).parse_rich_header()
+        return hashlib.md5(rich_header["clear_data"]).hexdigest()
+
+    def jump_to(self, addr):
+        return cutter.cmdj("s " + str(addr))

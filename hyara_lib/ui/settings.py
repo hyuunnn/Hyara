@@ -153,6 +153,9 @@ class HyaraGUI(MainGUI):
     def jump_to(self, addr):
         pass
 
+    def pretty_hex(self, data):
+        return " ".join(data[i : i + 2] for i in range(0, len(data), 2)).upper()
+
     def _make_hex_rule(self):
         self._result_plaintext.clear()
         self._result_plaintext.insertPlainText(
@@ -200,7 +203,7 @@ class HyaraGUI(MainGUI):
                         )
 
                     result += "      */\n"
-            result += "      $" + name + " = {" + "".join(value["text"]).upper() + "}\n"
+            result += "      $" + name + " = {" + self.pretty_hex(value["text"]) + "}\n"
 
         result += "  condition:\n"
         result += "      all of them"

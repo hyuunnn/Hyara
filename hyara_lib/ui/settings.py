@@ -137,6 +137,22 @@ class HyaraGUI(MainGUI):
     def get_md5(self):
         pass
 
+    @abstractmethod
+    def get_filepath(self):
+        pass
+
+    @abstractmethod
+    def get_rich_header(self):
+        pass
+
+    @abstractmethod
+    def get_imphash(self):
+        pass
+
+    @abstractmethod
+    def jump_to(self, addr):
+        pass
+
     def _make_hex_rule(self):
         self._result_plaintext.clear()
         self._result_plaintext.insertPlainText(
@@ -148,6 +164,7 @@ class HyaraGUI(MainGUI):
             "text": self._result_plaintext.toPlainText(),
             "start": self._start_address.text(),
             "end": self._end_address.text(),
+            "flag": True,
         }
         self._ui_populate_table()
 
@@ -169,23 +186,34 @@ class HyaraGUI(MainGUI):
         result += "  strings:\n"
 
         for name, value in self.rule_list.items():
-            result += "      /*\n"
-            for disasm, hex_value in zip(
-                self.get_disasm(value["start"], value["end"]),
-                self.get_hex(value["start"], value["end"]),
-            ):
-                mnemonic = disasm.split(" ")[0]
-                operend = " ".join(disasm.split(" ")[1:]).strip()
-                result += "          {:10}\t{:30}\t\t|{}\n".format(
-                    mnemonic, operend, hex_value.upper()
-                )
+            if self._check_comment.isChecked():
+                if value["flag"] is True:
+                    result += "      /*\n"
+                    for disasm, hex_value in zip(
+                        self.get_disasm(value["start"], value["end"]),
+                        self.get_hex(value["start"], value["end"]),
+                    ):
+                        mnemonic = disasm.split(" ")[0]
+                        operend = " ".join(disasm.split(" ")[1:]).strip()
+                        result += "          {:10}\t{:30}\t\t|{}\n".format(
+                            mnemonic, operend, hex_value.upper()
+                        )
 
-            result += "      */\n"
+                    result += "      */\n"
             result += "      $" + name + " = {" + "".join(value["text"]).upper() + "}\n"
 
         result += "  condition:\n"
-        result += "      all of them\n"
-        result += "}"
+        result += "      all of them"
+
+        if self._check_rich_header.isChecked():
+            result += (
+                ' and hash.md5(pe.rich_signature.clear_data) == "' + self.get_rich_header() + '"'
+            )
+
+        if self._check_imphash.isChecked():
+            result += ' and pe.imphash() == "' + self.get_imphash() + '"'
+        result += "\n}"
+
         return result
 
     def _yara_export_rule(self):
@@ -197,16 +225,14 @@ class HyaraGUI(MainGUI):
         yara_checker.YaraChecker(self._result_plaintext.toPlainText())._ui_init()
 
     def _yara_detector(self):
-        # yara_detector.YaraDetector()
-        pass
+        yara_detector.YaraDetector(
+            self._result_plaintext.toPlainText(), self.get_filepath(), self.jump_to
+        )._ui_init()
 
     def _yara_icon(self):
-        # yara_icon.YaraIcon()
-        pass
+        yara_icon.YaraIcon(self.get_filepath(), self.rule_list, self._ui_populate_table)._ui_init()
 
     def _ui_clicked_connect(self):
-        # self._start_address_button.clicked.connect(partial(self.IDAWrapper, "1"))
-        # self._end_address_button.clicked.connect(partial(self.IDAWrapper, "2"))
         self._make_button.clicked.connect(self._make_hex_rule)
         self._save_button.clicked.connect(self._save_rule)
         self._delete_button.clicked.connect(self._remove_rule)

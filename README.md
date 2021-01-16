@@ -15,15 +15,15 @@
 ### Start Screen and Options
 
 - When you run Hyara, it docks itself to the right and docks the output window to the left.
-- The results are saved in the table below when you click `Save`.
 - After specifying the address, press the `Make` button to show the specified hexadecimal or strings as a result.
-- Double-clicking the table clears all the existing rules.
+- The results are saved in the table below when you click `Save`.
+- If you double-click the table, you can clear the rule.
 - `Export Yara Rule`
   - Exports the previously created yara rules.
 <img src="images/Hyara_1.png" width="100%">
 
 - `Comment Option`
-  - Annotates the instructions next to the condition rule(s.
+  - Annotates the instructions next to the condition rule(s).
 - `Rich Header` and `imphash`
   - Adds rich header and imphash matching to the rule.
 - `String option`
@@ -80,7 +80,7 @@ Activate via Windows -> Plugins -> Hyara
   - Shows which part is detected in the sample loaded to disassembler, and when "Address" is clicked, it moves to the corresponding address on the disassembler view.
   - <img src="images/Hyara_5.png" width="100%">
 - YaraIcon
-  - Creates yara rules for icon resources embedded in the PE
+  - Creates yara rules for icon resources embedded in the PE.
   - <img src="images/Hyara_6.png" width="100%">
 
 ## Author

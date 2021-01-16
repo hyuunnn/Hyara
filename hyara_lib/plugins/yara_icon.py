@@ -124,7 +124,7 @@ class YaraIcon(QtWidgets.QDialog):
             "text": rule_text,
             "start": str(start_offset),
             "end": str(end),
-            "flag": False,
+            "type": "icon",
         }
 
         self._ui_populate_table()

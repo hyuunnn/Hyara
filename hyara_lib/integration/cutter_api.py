@@ -53,4 +53,4 @@ class HyaraCutter(HyaraGUI):
         return hashlib.md5(rich_header["clear_data"]).hexdigest()
 
     def jump_to(self, addr):
-        return cutter.cmdj("s " + str(addr))
+        return cutter.cmd("s " + str(addr))

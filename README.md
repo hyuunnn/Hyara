@@ -29,8 +29,8 @@
 - `String option`
   - This option extracts strings within the range specified.
 
-<img src="images/Hyara_2.png" width="100%">
 <img src="images/Hyara_3.png" width="100%">
+<img src="images/cutter_1.png" width="100%">
 
 ## Installation
 

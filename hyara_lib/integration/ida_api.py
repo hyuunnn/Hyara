@@ -36,6 +36,20 @@ class HyaraIDA(HyaraGUI):
             start = next_start
         return result
 
+    def get_string(self, start_address, end_address) -> list:
+        result = []
+        start = int(start_address, 16)
+        end = int(end_address, 16)
+        while start <= end:
+            # https://github.com/idapython/src/blob/master/python/idautils.py#L202
+            next_start = ida_bytes.next_head(start, ida_ida.cvar.inf.max_ea)
+            if ida_nalt.get_str_type(start) < 4294967295:
+                result.append(
+                    ida_bytes.get_strlit_contents(start, -1, ida_nalt.get_str_type(start)).decode()
+                )
+            start = next_start
+        return result
+
     def get_filepath(self) -> str:
         return ida_nalt.get_input_file_path()
 

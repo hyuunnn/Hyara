@@ -126,27 +126,31 @@ class HyaraGUI(MainGUI):
         self._ui_clicked_connect()
 
     @abstractmethod
-    def get_disasm(self, start_address, end_address):
+    def get_disasm(self, start_address, end_address) -> list:
         pass
 
     @abstractmethod
-    def get_hex(self, start_address, end_address):
+    def get_hex(self, start_address, end_address) -> list:
         pass
 
     @abstractmethod
-    def get_md5(self):
+    def get_string(self, start_address, end_address) -> list:
         pass
 
     @abstractmethod
-    def get_filepath(self):
+    def get_filepath(self) -> str:
         pass
 
     @abstractmethod
-    def get_rich_header(self):
+    def get_md5(self) -> str:
         pass
 
     @abstractmethod
-    def get_imphash(self):
+    def get_imphash(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_rich_header(self) -> str:
         pass
 
     @abstractmethod
@@ -156,19 +160,55 @@ class HyaraGUI(MainGUI):
     def pretty_hex(self, data):
         return " ".join(data[i : i + 2] for i in range(0, len(data), 2)).upper()
 
+    def get_comment(self, value):
+        if value["type"] == "hex":
+            self.result += "      /*\n"
+            for disasm, hex_value in zip(
+                self.get_disasm(value["start"], value["end"]),
+                self.get_hex(value["start"], value["end"]),
+            ):
+                mnemonic = disasm.split(" ")[0]
+                operend = " ".join(disasm.split(" ")[1:]).strip()
+                self.result += "          {:10}\t{:30}\t\t|{}\n".format(
+                    mnemonic, operend, hex_value.upper()
+                )
+
+            self.result += "      */\n"
+
+    def get_rule_data(self, name, value):
+        if value["type"] == "string":
+            self.result += "      $" + name + ' = "' + value["text"] + '" nocase wide ascii\n'
+        else:
+            self.result += "      $" + name + " = {" + self.pretty_hex(value["text"]) + "}\n"
+
     def _make_hex_rule(self):
         self._result_plaintext.clear()
-        self._result_plaintext.insertPlainText(
-            "".join(self.get_hex(self._start_address.text(), self._end_address.text())).upper()
-        )
+        if self._check_string.isChecked():
+            self._result_plaintext.insertPlainText(
+                "\n".join(self.get_string(self._start_address.text(), self._end_address.text()))
+            )
+        else:
+            self._result_plaintext.insertPlainText(
+                "".join(self.get_hex(self._start_address.text(), self._end_address.text())).upper()
+            )
 
     def _save_rule(self):
-        self.rule_list[self._variable_name.text()] = {
-            "text": self._result_plaintext.toPlainText(),
-            "start": self._start_address.text(),
-            "end": self._end_address.text(),
-            "flag": True,
-        }
+        if self._check_string.isChecked():
+            string_list = self._result_plaintext.toPlainText().split("\n")
+            for idx, string in enumerate(string_list):
+                self.rule_list["{}_{}".format(self._variable_name.text(), str(idx))] = {
+                    "text": string,
+                    "start": self._start_address.text(),
+                    "end": self._end_address.text(),
+                    "type": "string",
+                }
+        else:
+            self.rule_list[self._variable_name.text()] = {
+                "text": self._result_plaintext.toPlainText(),
+                "start": self._start_address.text(),
+                "end": self._end_address.text(),
+                "type": "hex",
+            }
         self._ui_populate_table()
 
     def _remove_rule(self):
@@ -177,47 +217,37 @@ class HyaraGUI(MainGUI):
         self._ui_populate_table()
 
     def _yara_result(self) -> str:
-        result = 'import "hash"\n'
-        result += 'import "pe"\n\n'
-        result += "rule {} \n".format(self._variable_name.text())
-        result += "{\n"
-        result += "  meta:\n"
-        result += '      tool = "https://github.com/hy00un/Hyara"\n'
-        result += '      version = "2.0"\n'
-        result += '      date = "{}"\n'.format(time.strftime("%Y-%m-%d"))
-        result += '      MD5 = "{}"\n'.format(self.get_md5())
-        result += "  strings:\n"
+        self.result = 'import "hash"\n'
+        self.result += 'import "pe"\n\n'
+        self.result += "rule {} \n".format(self._variable_name.text())
+        self.result += "{\n"
+        self.result += "  meta:\n"
+        self.result += '      tool = "https://github.com/hy00un/Hyara"\n'
+        self.result += '      version = "2.0"\n'
+        self.result += '      date = "{}"\n'.format(time.strftime("%Y-%m-%d"))
+        self.result += '      MD5 = "{}"\n'.format(self.get_md5())
+        self.result += "  strings:\n"
 
         for name, value in self.rule_list.items():
+
             if self._check_comment.isChecked():
-                if value["flag"] is True:
-                    result += "      /*\n"
-                    for disasm, hex_value in zip(
-                        self.get_disasm(value["start"], value["end"]),
-                        self.get_hex(value["start"], value["end"]),
-                    ):
-                        mnemonic = disasm.split(" ")[0]
-                        operend = " ".join(disasm.split(" ")[1:]).strip()
-                        result += "          {:10}\t{:30}\t\t|{}\n".format(
-                            mnemonic, operend, hex_value.upper()
-                        )
+                self.get_comment(value)
 
-                    result += "      */\n"
-            result += "      $" + name + " = {" + self.pretty_hex(value["text"]) + "}\n"
+            self.get_rule_data(name, value)
 
-        result += "  condition:\n"
-        result += "      all of them"
+        self.result += "  condition:\n"
+        self.result += "      all of them"
 
         if self._check_rich_header.isChecked():
-            result += (
+            self.result += (
                 ' and hash.md5(pe.rich_signature.clear_data) == "' + self.get_rich_header() + '"'
             )
 
         if self._check_imphash.isChecked():
-            result += ' and pe.imphash() == "' + self.get_imphash() + '"'
-        result += "\n}"
+            self.result += ' and pe.imphash() == "' + self.get_imphash() + '"'
+        self.result += "\n}"
 
-        return result
+        return self.result
 
     def _yara_export_rule(self):
         self._result_plaintext.clear()

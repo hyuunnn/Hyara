@@ -2,6 +2,7 @@ from ..ui.settings import HyaraGUI
 import cutter
 import hashlib
 import pefile
+import base64
 
 
 class HyaraCutter(HyaraGUI):
@@ -26,6 +27,16 @@ class HyaraCutter(HyaraGUI):
             cutter_data = cutter.cmdj("aoj @ " + str(start))
             result.append(cutter_data[0]["bytes"])
             start += cutter_data[0]["size"]
+        return result
+
+    def get_string(self, start_address, end_address) -> list:
+        result = []
+        start = int(start_address, 16)
+        end = int(end_address, 16)
+        data = cutter.cmdj("Csj")
+        for i in data:
+            if i["offset"] >= start and i["offset"] <= end:
+                result.append(base64.b64decode(i["name"]).decode())
         return result
 
     def get_filepath(self) -> str:

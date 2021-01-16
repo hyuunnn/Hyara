@@ -39,7 +39,6 @@
 ```bash
 pip install -r requirements.txt
 ```
-
 - IDA Pro
   - copy ``Hyara_IDA.py and hyara_lib folder`` to $ida_dir/plugins
   - Activate via Edit -> Plugins -> Hyara (or CTRL+SHIFT+Y)
@@ -49,9 +48,21 @@ pip install -r requirements.txt
 
 ### Cutter
 
+### Windows
 ```bash
 python3 -m pip install -I -t $cutter_dir/$cutter_python_version/site-packages -r requirements.txt
 ```
+
+### Linux
+
+<img src="images/cutter_install_1.png" width="100%">
+
+```bash
+mv /tmp/.mount_CutterEgQh2i/usr .
+pip3 install -I -t usr/lib/python3.6/site-packages/ -r /root/Hyara/requirements.txt
+./Cutter-v1.12.0-x64.Linux.AppImage --pythonhome /root/usr
+```
+
 copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to $cutter_plugin_dir/python/Hyara
 
 Activate via Windows -> Plugins -> Hyara

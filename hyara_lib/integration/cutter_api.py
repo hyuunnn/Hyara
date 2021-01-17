@@ -21,7 +21,7 @@ class HyaraCutter(HyaraGUI):
         result = []
         current_start = start_address
         while current_start < end_address:
-            cutter_data = cutter.cmdj("i. @ " + str(current_start))
+            cutter_data = cutter.cmdj(f"i. @ {current_start}")
             result.append(self.get_hex(current_start, cutter_data["next"]))
             current_start = cutter_data["next"]
         return result
@@ -52,12 +52,12 @@ class HyaraCutter(HyaraGUI):
         pe = pefile.PE(self.get_filepath())
         rva = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].VirtualAddress
         size = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].Size
-        data = pe.parse_debug_directory(rva, size)
-
-        if data:
-            return data[0].entry.PdbFileName.split(b"\x00", 1)[0].decode().replace("\\", "\\\\")
-        else:
-            return ""
+        return (
+            pe.parse_debug_directory(rva, size)[0]
+            .entry.PdbFileName.split(b"\x00", 1)[0]
+            .decode()
+            .replace("\\", "\\\\")
+        )
 
     def jump_to(self, addr):
-        return cutter.cmd("s " + str(addr))
+        return cutter.cmd(f"s {addr}")

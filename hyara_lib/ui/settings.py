@@ -73,7 +73,7 @@ class MainGUI:
         GL3.addWidget(self._check_string)
         GL3.addWidget(QtWidgets.QLabel("String Option"))
         GL3.addStretch()
-        
+
         GL3.addWidget(self._check_rich_header)
         GL3.addWidget(QtWidgets.QLabel("Rich Header"))
         GL3.addStretch()
@@ -81,7 +81,7 @@ class MainGUI:
         GL3.addWidget(self._check_imphash)
         GL3.addWidget(QtWidgets.QLabel("Imphash"))
         GL3.addStretch()
-        
+
         GL3.addWidget(self._check_pdb_path)
         GL3.addWidget(QtWidgets.QLabel("PDB Path"))
         self.layout.addLayout(GL3)
@@ -148,6 +148,10 @@ class HyaraGUI(MainGUI):
         pass
 
     @abstractmethod
+    def get_comment_hex(self, start_address, end_address) -> list:
+        pass
+
+    @abstractmethod
     def get_string(self, start_address, end_address) -> list:
         pass
 
@@ -182,8 +186,8 @@ class HyaraGUI(MainGUI):
         if value["type"] == "hex":
             self.result += "      /*\n"
             for disasm, hex_value in zip(
-                self.get_disasm(value["start"], value["end"]),
-                self.get_hex(value["start"], value["end"]),
+                self.get_disasm(int(value["start"], 16), int(value["end"], 16)),
+                self.get_comment_hex(int(value["start"], 16), int(value["end"], 16)),
             ):
                 mnemonic = disasm.split(" ")[0]
                 operend = " ".join(disasm.split(" ")[1:]).strip()
@@ -203,11 +207,19 @@ class HyaraGUI(MainGUI):
         self._result_plaintext.clear()
         if self._check_string.isChecked():
             self._result_plaintext.insertPlainText(
-                "\n".join(self.get_string(self._start_address.text(), self._end_address.text()))
+                "\n".join(
+                    self.get_string(
+                        int(self._start_address.text(), 16), int(self._end_address.text(), 16)
+                    )
+                )
             )
         else:
             self._result_plaintext.insertPlainText(
-                "".join(self.get_hex(self._start_address.text(), self._end_address.text())).upper()
+                "".join(
+                    self.get_hex(
+                        int(self._start_address.text(), 16), int(self._end_address.text(), 16)
+                    )
+                ).upper()
             )
 
     def _save_rule(self):
@@ -261,12 +273,14 @@ class HyaraGUI(MainGUI):
             pefile.PE(self.get_filepath())
             if self._check_rich_header.isChecked():
                 self.result += (
-                    ' and hash.md5(pe.rich_signature.clear_data) == "' + self.get_rich_header() + '"'
+                    ' and hash.md5(pe.rich_signature.clear_data) == "'
+                    + self.get_rich_header()
+                    + '"'
                 )
 
             if self._check_imphash.isChecked():
                 self.result += ' and pe.imphash() == "' + self.get_imphash() + '"'
-      
+
             if self._check_pdb_path.isChecked():
                 self.result += ' and pe.pdb_path == "' + self.get_pdb_path() + '"'
         except pefile.PEFormatError:

@@ -10,25 +10,32 @@ class HyaraCutter(HyaraGUI):
         super(HyaraCutter, self).__init__()
 
     def get_disasm(self, start_address, end_address) -> list:
-        length = int(end_address, 16)-int(start_address, 16)
+        length = end_address - start_address
         return cutter.cmd(f"pI {length} @ {start_address}").split("\n")
 
-    def get_hex(self, start_address, end_address) -> list:
-        length = int(end_address, 16)-int(start_address, 16)
+    def get_hex(self, start_address, end_address) -> str:
+        length = end_address - start_address
         return cutter.cmd(f"p8 {length} @ {start_address}").strip()
+
+    def get_comment_hex(self, start_address, end_address) -> list:
+        result = []
+        current_start = start_address
+        while current_start < end_address:
+            cutter_data = cutter.cmdj("i. @ " + str(current_start))
+            result.append(self.get_hex(current_start, cutter_data["next"]))
+            current_start = cutter_data["next"]
+        return result
 
     def get_string(self, start_address, end_address) -> list:
         result = []
-        start = int(start_address, 16)
-        end = int(end_address, 16)
         data = cutter.cmdj("Csj")  # get single line strings : C*.@addr
         for i in data:
-            if i["offset"] >= start and i["offset"] <= end:
+            if i["offset"] >= start_address and i["offset"] <= end_address:
                 result.append(base64.b64decode(i["name"]).decode())
         return result
 
     def get_filepath(self) -> str:
-        return cutter.cmdj("ij")["core"]["file"]
+        return cutter.cmd("o.").strip()
 
     def get_md5(self) -> str:
         return cutter.cmdj("itj").get("md5", None)
@@ -41,15 +48,16 @@ class HyaraCutter(HyaraGUI):
         return hashlib.md5(rich_header["clear_data"]).hexdigest()
 
     def get_pdb_path(self) -> str:
+        # https://github.com/VirusTotal/yara/blob/master/docs/modules/pe.rst
         pe = pefile.PE(self.get_filepath())
         rva = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].VirtualAddress
         size = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].Size
-        return (
-            pe.parse_debug_directory(rva, size)[0]
-            .entry.PdbFileName.split(b"\x00", 1)[0]
-            .decode()
-            .replace("\\", "\\\\")
-        )
+        data = pe.parse_debug_directory(rva, size)
+
+        if data:
+            return data[0].entry.PdbFileName.split(b"\x00", 1)[0].decode().replace("\\", "\\\\")
+        else:
+            return ""
 
     def jump_to(self, addr):
         return cutter.cmd("s " + str(addr))

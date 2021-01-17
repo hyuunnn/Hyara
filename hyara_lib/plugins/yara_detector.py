@@ -1,6 +1,10 @@
-try:
+from sys import modules
+
+if "idaapi" in modules:
+    # We are running inside IDA
     from PyQt5 import QtWidgets
-except:
+else:
+    # We are running inside Cutter or Binary Ninja
     import PySide2.QtWidgets as QtWidgets
 
 import os.path

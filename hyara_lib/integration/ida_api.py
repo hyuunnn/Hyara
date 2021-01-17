@@ -16,38 +16,39 @@ class HyaraIDA(HyaraGUI):
 
     def get_disasm(self, start_address, end_address) -> list:
         result = []
-        start = int(start_address, 16)
-        end = int(end_address, 16)
-        while start <= end:
+        current_start = start_address
+        while current_start < end_address:
             # https://github.com/idapython/src/blob/master/python/idautils.py#L202
-            next_start = ida_bytes.next_head(start, ida_ida.cvar.inf.max_ea)
-            result.append(idc.GetDisasm(start))
-            start = next_start
+            result.append(idc.GetDisasm(current_start))
+            current_start = ida_bytes.next_head(current_start, ida_ida.cvar.inf.max_ea)
         return result
 
-    def get_hex(self, start_address, end_address) -> list:
+    def get_hex(self, start_address, end_address) -> str:
+        length = end_address - start_address
+        return binascii.hexlify(ida_bytes.get_bytes(start_address, length)).decode()
+
+    def get_comment_hex(self, start_address, end_address) -> list:
         result = []
-        start = int(start_address, 16)
-        end = int(end_address, 16)
-        while start <= end:
+        current_start = start_address
+        while current_start < end_address:
             # https://github.com/idapython/src/blob/master/python/idautils.py#L202
-            next_start = ida_bytes.next_head(start, ida_ida.cvar.inf.max_ea)
-            result.append(binascii.hexlify(ida_bytes.get_bytes(start, next_start - start)).decode())
-            start = next_start
+            next_start = ida_bytes.next_head(current_start, ida_ida.cvar.inf.max_ea)
+            result.append(self.get_hex(current_start, next_start))
+            current_start = next_start
         return result
 
     def get_string(self, start_address, end_address) -> list:
         result = []
-        start = int(start_address, 16)
-        end = int(end_address, 16)
-        while start <= end:
-            # https://github.com/idapython/src/blob/master/python/idautils.py#L202
-            next_start = ida_bytes.next_head(start, ida_ida.cvar.inf.max_ea)
-            if ida_nalt.get_str_type(start) < 4294967295:
+        current_start = start_address
+        while current_start < end_address:
+            if ida_nalt.get_str_type(current_start) < 4294967295:
                 result.append(
-                    ida_bytes.get_strlit_contents(start, -1, ida_nalt.get_str_type(start)).decode()
+                    ida_bytes.get_strlit_contents(
+                        current_start, -1, ida_nalt.get_str_type(current_start)
+                    ).decode()
                 )
-            start = next_start
+            # https://github.com/idapython/src/blob/master/python/idautils.py#L202
+            current_start = ida_bytes.next_head(current_start, ida_ida.cvar.inf.max_ea)
         return result
 
     def get_filepath(self) -> str:
@@ -64,15 +65,16 @@ class HyaraIDA(HyaraGUI):
         return hashlib.md5(rich_header["clear_data"]).hexdigest()
 
     def get_pdb_path(self) -> str:
+        # https://github.com/VirusTotal/yara/blob/master/docs/modules/pe.rst
         pe = pefile.PE(self.get_filepath())
         rva = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].VirtualAddress
         size = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].Size
-        return (
-            pe.parse_debug_directory(rva, size)[0]
-            .entry.PdbFileName.split(b"\x00", 1)[0]
-            .decode()
-            .replace("\\", "\\\\")
-        )
+        data = pe.parse_debug_directory(rva, size)
+
+        if data:
+            return data[0].entry.PdbFileName.split(b"\x00", 1)[0].decode().replace("\\", "\\\\")
+        else:
+            return ""
 
     def jump_to(self, addr):
         idc.jumpto(addr)

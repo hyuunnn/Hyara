@@ -8,7 +8,10 @@ class HyaraBinaryNinja(HyaraGUI):
     def get_disasm(self, start_address, end_address) -> list:
         pass
 
-    def get_hex(self, start_address, end_address) -> list:
+    def get_hex(self, start_address, end_address) -> str:
+        pass
+
+    def get_comment_hex(self, start_address, end_address) -> list:
         pass
 
     def get_string(self, start_address, end_address) -> list:

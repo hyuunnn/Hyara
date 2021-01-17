@@ -26,5 +26,8 @@ class HyaraBinaryNinja(HyaraGUI):
     def get_rich_header(self) -> str:
         pass
 
+    def get_pdb_path(self) -> str:
+        pass
+
     def jump_to(self, addr):
         pass

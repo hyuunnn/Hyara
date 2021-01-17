@@ -33,6 +33,7 @@ class MainGUI:
         self._check_string = QtWidgets.QCheckBox()
         self._check_rich_header = QtWidgets.QCheckBox()
         self._check_imphash = QtWidgets.QCheckBox()
+        self._check_pdb_path = QtWidgets.QCheckBox()
 
         self._result_plaintext = QtWidgets.QPlainTextEdit()
 
@@ -70,6 +71,8 @@ class MainGUI:
         GL3.addWidget(self._check_rich_header, 0, 7)
         GL3.addWidget(QtWidgets.QLabel("Imphash"), 0, 8)
         GL3.addWidget(self._check_imphash, 0, 9)
+        GL3.addWidget(QtWidgets.QLabel("PDB Path"), 0, 10)
+        GL3.addWidget(self._check_pdb_path, 0, 11)
         self.layout.addLayout(GL3)
 
         self.layout.addWidget(self._result_plaintext)
@@ -151,6 +154,10 @@ class HyaraGUI(MainGUI):
 
     @abstractmethod
     def get_rich_header(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_pdb_path(self) -> str:
         pass
 
     @abstractmethod
@@ -245,6 +252,10 @@ class HyaraGUI(MainGUI):
 
         if self._check_imphash.isChecked():
             self.result += ' and pe.imphash() == "' + self.get_imphash() + '"'
+
+        if self._check_pdb_path.isChecked():
+            self.result += ' and pe.pdb_path == "' + self.get_pdb_path() + '"'
+
         self.result += "\n}"
 
         return self.result

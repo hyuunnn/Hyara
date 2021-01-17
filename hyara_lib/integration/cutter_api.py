@@ -52,5 +52,13 @@ class HyaraCutter(HyaraGUI):
         rich_header = pefile.PE(self.get_filepath()).parse_rich_header()
         return hashlib.md5(rich_header["clear_data"]).hexdigest()
 
+    def get_pdb_path(self) -> str:
+        pe = pefile.PE(self.get_filepath())
+        rva = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].VirtualAddress
+        size = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].Size
+        return (
+            pe.parse_debug_directory(rva, size)[0].entry.PdbFileName.split(b"\x00", 1)[0].decode()
+        )
+
     def jump_to(self, addr):
         return cutter.cmd("s " + str(addr))

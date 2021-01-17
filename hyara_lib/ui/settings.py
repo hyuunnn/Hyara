@@ -36,6 +36,7 @@ class MainGUI:
         self._check_string = QtWidgets.QCheckBox()
         self._check_rich_header = QtWidgets.QCheckBox()
         self._check_imphash = QtWidgets.QCheckBox()
+        self._check_pdb_path = QtWidgets.QCheckBox()
 
         self._result_plaintext = QtWidgets.QPlainTextEdit()
 
@@ -72,7 +73,6 @@ class MainGUI:
         GL3.addWidget(self._check_string)
         GL3.addWidget(QtWidgets.QLabel("String Option"))
         GL3.addStretch()
-
         
         GL3.addWidget(self._check_rich_header)
         GL3.addWidget(QtWidgets.QLabel("Rich Header"))
@@ -80,6 +80,10 @@ class MainGUI:
 
         GL3.addWidget(self._check_imphash)
         GL3.addWidget(QtWidgets.QLabel("Imphash"))
+        GL3.addStretch()
+        
+        GL3.addWidget(self._check_pdb_path)
+        GL3.addWidget(QtWidgets.QLabel("PDB Path"))
         self.layout.addLayout(GL3)
 
         self.layout.addWidget(self._result_plaintext)
@@ -161,6 +165,10 @@ class HyaraGUI(MainGUI):
 
     @abstractmethod
     def get_rich_header(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_pdb_path(self) -> str:
         pass
 
     @abstractmethod
@@ -258,6 +266,9 @@ class HyaraGUI(MainGUI):
 
             if self._check_imphash.isChecked():
                 self.result += ' and pe.imphash() == "' + self.get_imphash() + '"'
+      
+            if self._check_pdb_path.isChecked():
+                self.result += ' and pe.pdb_path == "' + self.get_pdb_path() + '"'
         except pefile.PEFormatError:
             # Not a PE file, continue
             pass

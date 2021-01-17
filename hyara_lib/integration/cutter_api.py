@@ -21,7 +21,7 @@ class HyaraCutter(HyaraGUI):
         result = []
         start = int(start_address, 16)
         end = int(end_address, 16)
-        data = cutter.cmdj("Csj")
+        data = cutter.cmdj("Csj")  # get single line strings : C*.@addr
         for i in data:
             if i["offset"] >= start and i["offset"] <= end:
                 result.append(base64.b64decode(i["name"]).decode())
@@ -40,5 +40,16 @@ class HyaraCutter(HyaraGUI):
         rich_header = pefile.PE(self.get_filepath()).parse_rich_header()
         return hashlib.md5(rich_header["clear_data"]).hexdigest()
 
+    def get_pdb_path(self) -> str:
+        pe = pefile.PE(self.get_filepath())
+        rva = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].VirtualAddress
+        size = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].Size
+        return (
+            pe.parse_debug_directory(rva, size)[0]
+            .entry.PdbFileName.split(b"\x00", 1)[0]
+            .decode()
+            .replace("\\", "\\\\")
+        )
+
     def jump_to(self, addr):
-        return cutter.cmdj("s " + str(addr))
+        return cutter.cmd("s " + str(addr))

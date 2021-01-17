@@ -24,7 +24,7 @@ class HyaraCutter(HyaraGUI):
         start = int(start_address, 16)
         end = int(end_address, 16)
         while start <= end:
-            cutter_data = cutter.cmdj("aoj @ " + str(start))
+            cutter_data = cutter.cmdj("aoj @ " + str(start))  # or p8j size @ addr
             result.append(cutter_data[0]["bytes"])
             start += cutter_data[0]["size"]
         return result
@@ -33,7 +33,7 @@ class HyaraCutter(HyaraGUI):
         result = []
         start = int(start_address, 16)
         end = int(end_address, 16)
-        data = cutter.cmdj("Csj")
+        data = cutter.cmdj("Csj")  # get single line strings : C*.@addr
         for i in data:
             if i["offset"] >= start and i["offset"] <= end:
                 result.append(base64.b64decode(i["name"]).decode())

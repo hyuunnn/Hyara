@@ -68,7 +68,10 @@ class HyaraIDA(HyaraGUI):
         rva = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].VirtualAddress
         size = pe.OPTIONAL_HEADER.DATA_DIRECTORY[6].Size
         return (
-            pe.parse_debug_directory(rva, size)[0].entry.PdbFileName.split(b"\x00", 1)[0].decode()
+            pe.parse_debug_directory(rva, size)[0]
+            .entry.PdbFileName.split(b"\x00", 1)[0]
+            .decode()
+            .replace("\\", "\\\\")
         )
 
     def jump_to(self, addr):

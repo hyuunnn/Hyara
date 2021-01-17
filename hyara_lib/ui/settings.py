@@ -1,12 +1,17 @@
-try:
+from sys import modules
+
+if "idaapi" in modules:
+    # We are running inside IDA
     from PyQt5 import QtWidgets
-except:
+else:
+    # We are running inside Cutter or Binary Ninja
     import PySide2.QtWidgets as QtWidgets
 
 from abc import ABCMeta, abstractmethod
 from ..plugins import yara_checker, yara_detector, yara_icon
 
 import time
+import pefile
 
 # Based GUI
 class MainGUI:
@@ -25,8 +30,6 @@ class MainGUI:
 
         self._start_address = QtWidgets.QLineEdit()
         self._end_address = QtWidgets.QLineEdit()
-        self._start_address_button = QtWidgets.QPushButton("Select / Exit")
-        self._end_address_button = QtWidgets.QPushButton("Select / Exit")
 
         self._check_comment = QtWidgets.QCheckBox()
         self._check_wildcard = QtWidgets.QCheckBox()
@@ -53,23 +56,30 @@ class MainGUI:
         GL2 = QtWidgets.QGridLayout()
         GL2.addWidget(QtWidgets.QLabel("Start Address : "), 0, 0)
         GL2.addWidget(self._start_address, 0, 1)
-        GL2.addWidget(self._start_address_button, 0, 2)
         GL2.addWidget(QtWidgets.QLabel("End Address : "), 0, 3)
         GL2.addWidget(self._end_address, 0, 4)
-        GL2.addWidget(self._end_address_button, 0, 5)
         self.layout.addLayout(GL2)
 
-        GL3 = QtWidgets.QGridLayout()
-        GL3.addWidget(QtWidgets.QLabel("Comment Option"), 0, 0)
-        GL3.addWidget(self._check_comment, 0, 1)
-        GL3.addWidget(QtWidgets.QLabel("Wildcard Option"), 0, 2)
-        GL3.addWidget(self._check_wildcard, 0, 3)
-        GL3.addWidget(QtWidgets.QLabel("String Option"), 0, 4)
-        GL3.addWidget(self._check_string, 0, 5)
-        GL3.addWidget(QtWidgets.QLabel("Rich Header"), 0, 6)
-        GL3.addWidget(self._check_rich_header, 0, 7)
-        GL3.addWidget(QtWidgets.QLabel("Imphash"), 0, 8)
-        GL3.addWidget(self._check_imphash, 0, 9)
+        GL3 = QtWidgets.QHBoxLayout()
+        GL3.addWidget(self._check_comment)
+        GL3.addWidget(QtWidgets.QLabel("Comment Option"))
+        GL3.addStretch()
+
+        GL3.addWidget(self._check_wildcard)
+        GL3.addWidget(QtWidgets.QLabel("Wildcard Option"))
+        GL3.addStretch()
+
+        GL3.addWidget(self._check_string)
+        GL3.addWidget(QtWidgets.QLabel("String Option"))
+        GL3.addStretch()
+
+        
+        GL3.addWidget(self._check_rich_header)
+        GL3.addWidget(QtWidgets.QLabel("Rich Header"))
+        GL3.addStretch()
+
+        GL3.addWidget(self._check_imphash)
+        GL3.addWidget(QtWidgets.QLabel("Imphash"))
         self.layout.addLayout(GL3)
 
         self.layout.addWidget(self._result_plaintext)
@@ -238,15 +248,21 @@ class HyaraGUI(MainGUI):
         self.result += "  condition:\n"
         self.result += "      all of them"
 
-        if self._check_rich_header.isChecked():
-            self.result += (
-                ' and hash.md5(pe.rich_signature.clear_data) == "' + self.get_rich_header() + '"'
-            )
+        try:
+            # Check if opened file is a PE
+            pefile.PE(self.get_filepath())
+            if self._check_rich_header.isChecked():
+                self.result += (
+                    ' and hash.md5(pe.rich_signature.clear_data) == "' + self.get_rich_header() + '"'
+                )
 
-        if self._check_imphash.isChecked():
-            self.result += ' and pe.imphash() == "' + self.get_imphash() + '"'
+            if self._check_imphash.isChecked():
+                self.result += ' and pe.imphash() == "' + self.get_imphash() + '"'
+        except pefile.PEFormatError:
+            # Not a PE file, continue
+            pass
+
         self.result += "\n}"
-
         return self.result
 
     def _yara_export_rule(self):

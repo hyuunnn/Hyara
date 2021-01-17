@@ -10,24 +10,12 @@ class HyaraCutter(HyaraGUI):
         super(HyaraCutter, self).__init__()
 
     def get_disasm(self, start_address, end_address) -> list:
-        result = []
-        start = int(start_address, 16)
-        end = int(end_address, 16)
-        while start <= end:
-            cutter_data = cutter.cmdj("aoj @ " + str(start))
-            result.append(cutter_data[0]["disasm"])
-            start += cutter_data[0]["size"]
-        return result
+        length = int(end_address, 16)-int(start_address, 16)
+        return cutter.cmd(f"pI {length} @ {start_address}").split("\n")
 
     def get_hex(self, start_address, end_address) -> list:
-        result = []
-        start = int(start_address, 16)
-        end = int(end_address, 16)
-        while start <= end:
-            cutter_data = cutter.cmdj("aoj @ " + str(start))
-            result.append(cutter_data[0]["bytes"])
-            start += cutter_data[0]["size"]
-        return result
+        length = int(end_address, 16)-int(start_address, 16)
+        return cutter.cmd(f"p8 {length} @ {start_address}").strip()
 
     def get_string(self, start_address, end_address) -> list:
         result = []
@@ -43,7 +31,7 @@ class HyaraCutter(HyaraGUI):
         return cutter.cmdj("ij")["core"]["file"]
 
     def get_md5(self) -> str:
-        return hashlib.md5(open(self.get_filepath(), "rb").read()).hexdigest()
+        return cutter.cmdj("itj").get("md5", None)
 
     def get_imphash(self) -> str:
         return pefile.PE(self.get_filepath()).get_imphash()

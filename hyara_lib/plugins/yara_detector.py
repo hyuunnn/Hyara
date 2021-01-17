@@ -18,6 +18,11 @@ class YaraDetector(QtWidgets.QDialog):
         self.jump_to = jump_to
 
     def _ui_init(self):
+        try:
+            self.pe = pefile.PE(self.file_path)
+        except:
+            self.pe = None
+
         self._ui_setting()
         self._ui_init_layout()
         self._ui_clicked_connect()
@@ -60,12 +65,14 @@ class YaraDetector(QtWidgets.QDialog):
             return f.read()
 
     def get_va_from_offset(self, addr):
-        pe = pefile.PE(self.file_path)
-        return pe.OPTIONAL_HEADER.ImageBase + pe.get_rva_from_offset(addr)
+        return self.pe.OPTIONAL_HEADER.ImageBase + self.pe.get_rva_from_offset(addr)
 
     def jump_addr(self, row, column):
         addr = int(self._table.item(row, 0).text(), 16)  # RAW
-        self.jump_to(self.get_va_from_offset(addr))
+        if self.pe:
+            self.jump_to(self.get_va_from_offset(addr))
+        else:
+            self.jump_to(addr)
 
     def _search(self):
         result = []

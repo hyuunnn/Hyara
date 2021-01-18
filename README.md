@@ -22,6 +22,9 @@
   - Exports the previously created yara rules.
 <img src="images/Hyara_1.png" width="100%">
 
+- `Right Click`
+  - You can select either start address or end address. (IDA Pro, Cutter)
+  
 - `Comment Option`
   - Annotates the instructions next to the condition rule(s).
 - `Rich Header` and `imphash`

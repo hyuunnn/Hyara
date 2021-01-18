@@ -36,8 +36,7 @@ class HyaraBinaryNinja(HyaraGUI):
         return result
 
     def get_hex(self, start_address, end_address) -> str:
-        start = start_address
-        return binascii.hexlify(self.bv.read(start, end_address - start)).decode()
+        return binascii.hexlify(self.bv.read(start_address, end_address - start_address)).decode()
 
     def get_comment_hex(self, start_address, end_address) -> list:
         result = []
@@ -51,9 +50,7 @@ class HyaraBinaryNinja(HyaraGUI):
         return result
 
     def get_string(self, start_address, end_address) -> list:
-        start = start_address
-        length = end_address - start
-        return [i.value for i in self.bv.get_strings(start, length)]
+        return [i.value for i in self.bv.get_strings(start_address, end_address - start_address)]
 
     def get_filepath(self) -> str:
         return self.bv.file.original_filename

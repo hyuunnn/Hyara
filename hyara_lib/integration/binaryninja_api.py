@@ -1,13 +1,13 @@
 from ..ui.settings import HyaraGUI
 import pefile
-import hashlib
 import binascii
 
 from binaryninjaui import DockHandler
+from binaryninja.transform import Transform
 
 
+# https://github.com/gaasedelen/lighthouse/blob/master/plugins/lighthouse/util/disassembler/binja_api.py#L181
 def binja_get_bv_from_dock():
-    # https://github.com/gaasedelen/lighthouse/blob/master/plugins/lighthouse/util/disassembler/binja_api.py#L181
     dh = DockHandler.getActiveDockHandler()
     if not dh:
         return None
@@ -60,14 +60,14 @@ class HyaraBinaryNinja(HyaraGUI):
 
     def get_md5(self) -> str:
         with open(self.get_filepath(), "rb") as f:
-            return hashlib.md5(f.read()).hexdigest()
+            return Transform["RawHex"].encode(Transform["MD5"].encode(f.read()))
 
     def get_imphash(self) -> str:
         return pefile.PE(self.get_filepath()).get_imphash()
 
     def get_rich_header(self) -> str:
         rich_header = pefile.PE(self.get_filepath()).parse_rich_header()
-        return hashlib.md5(rich_header["clear_data"]).hexdigest()
+        return Transform["RawHex"].encode(Transform["MD5"].encode(rich_header["clear_data"]))
 
     def get_pdb_path(self) -> str:
         # https://github.com/VirusTotal/yara/blob/master/docs/modules/pe.rst

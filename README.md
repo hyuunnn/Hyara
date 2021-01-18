@@ -2,7 +2,7 @@
 
 ![Version](https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000)
 
-<img src="images/Hyara_0.gif" width="100%">
+<img src="images/Hyara.gif" width="100%">
 
 > Hyara is plugin that provides convenience when writing yararule.
 > 

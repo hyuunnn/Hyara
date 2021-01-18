@@ -2,14 +2,7 @@ from hyara_lib.integration.binaryninja_api import HyaraBinaryNinja
 
 import PySide2.QtWidgets as QtWidgets
 from PySide2.QtCore import Qt
-from binaryninjaui import (
-    DockHandler,
-    DockContextHandler,
-    UIActionHandler,
-    UIAction,
-    Menu,
-    DockHandler,
-)
+from binaryninjaui import DockHandler, DockContextHandler, UIActionHandler
 
 
 class HyaraDockWidget(QtWidgets.QWidget, DockContextHandler):

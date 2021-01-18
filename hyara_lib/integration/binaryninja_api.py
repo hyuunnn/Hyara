@@ -3,14 +3,7 @@ import pefile
 import hashlib
 import binascii
 
-from binaryninjaui import (
-    DockHandler,
-    DockContextHandler,
-    UIActionHandler,
-    UIAction,
-    Menu,
-    DockHandler,
-)
+from binaryninjaui import DockHandler
 
 
 def binja_get_bv_from_dock():

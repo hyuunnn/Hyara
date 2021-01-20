@@ -6,7 +6,7 @@ import cutter
 class HyaraWidget(cutter.CutterDockWidget):
     def __init__(self, parent):
         super(HyaraWidget, self).__init__(parent)
-        self.main  = parent
+        self.main = parent
         self.setObjectName("Hyara")
         self.setWindowTitle("Hyara")
 
@@ -25,7 +25,7 @@ class HyaraPlugin(cutter.CutterPlugin):
 
     def setupPlugin(self):
         pass
-    
+
     def setStartAddress(self):
         offset = int(self.startAddrAction.data())
         if offset:
@@ -42,20 +42,19 @@ class HyaraPlugin(cutter.CutterPlugin):
         self.endAddrAction = QtWidgets.QAction("Hyara - Select End Address")
 
         # Disassembly menu actions
-        menu = self.hyaraWidget.main.getContextMenuExtensions(cutter.MainWindow.ContextMenuType.Disassembly)
+        menu = self.hyaraWidget.main.getContextMenuExtensions(
+            cutter.MainWindow.ContextMenuType.Disassembly
+        )
         menu.addSeparator()
         menu.addAction(self.startAddrAction)
         menu.addAction(self.endAddrAction)
         self.startAddrAction.triggered.connect(self.setStartAddress)
         self.endAddrAction.triggered.connect(self.setEndAddress)
-        
-
 
     def setupInterface(self, main):
         self.hyaraWidget = HyaraWidget(main)
         self.setupActions()
         main.addPluginDockWidget(self.hyaraWidget)
-
 
     def terminate(self):
         pass

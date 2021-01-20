@@ -96,3 +96,4 @@ Activate via Windows -> Plugins -> Hyara
 
 * Twitter: <a href="https://twitter.com/kjkwak12">kjkwak12</a>
 * Github: <a href="https://github.com/gaasedelen">gaasedelen</a> - <a href="https://github.com/hyuunnn/Hyara/blob/master/hyara_lib/integration/binaryninja_api.py#L9">Link</a>
+* Github: <a href="https://github.com/ITAYC0HEN">ITAYC0HEN</a> - <a href="https://github.com/hyuunnn/Hyara/pull/14">Link</a>

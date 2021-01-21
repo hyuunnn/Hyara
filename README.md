@@ -24,6 +24,7 @@
 
 - `Right Click`
   - You can select either start address or end address. (IDA Pro, Cutter)
+<img src="images/Hyara_7.png" width="100%">
   
 - `Comment Option`
   - Annotates the instructions next to the condition rule(s).

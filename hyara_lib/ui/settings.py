@@ -205,22 +205,14 @@ class HyaraGUI(MainGUI):
 
     def _make_hex_rule(self):
         self._result_plaintext.clear()
-        if self._check_string.isChecked():
-            self._result_plaintext.insertPlainText(
-                "\n".join(
-                    self.get_string(
-                        int(self._start_address.text(), 16), int(self._end_address.text(), 16)
-                    )
-                )
-            )
-        else:
-            self._result_plaintext.insertPlainText(
-                "".join(
-                    self.get_hex(
-                        int(self._start_address.text(), 16), int(self._end_address.text(), 16)
-                    )
-                ).upper()
-            )
+        start = int(self._start_address.text(), 16)
+        end = int(self._end_address.text(), 16)
+
+        if start < end:
+            if self._check_string.isChecked():
+                self._result_plaintext.insertPlainText("\n".join(self.get_string(start, end)))
+            else:
+                self._result_plaintext.insertPlainText("".join(self.get_hex(start, end)).upper())
 
     def _save_rule(self):
         if self._check_string.isChecked():

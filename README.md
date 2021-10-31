@@ -54,20 +54,22 @@ pip install -r requirements.txt
 
 ### Windows
 ```bash
-python3 -m pip install -I -t $cutter_dir/$cutter_python_version/site-packages -r requirements.txt
+C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python37\\python.exe -m pip install -I -t $cutter_dir/python37/site-packages -r requirements.txt
 ```
+
+copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to $cutter_dir/plugins/python/Hyara
 
 ### Linux
 
-<img src="images/cutter_install_1.png" width="100%">
+<img src="images/cutter_install__1.png" width="100%">
 
 ```bash
-mv /tmp/.mount_CutterEgQh2i/usr .
-pip3 install -I -t usr/lib/python3.6/site-packages/ -r /root/Hyara/requirements.txt
-./Cutter-v1.12.0-x64.Linux.AppImage --pythonhome /root/usr
+cp -r /tmp/.mount_Cutter5o3a5G/usr /root
+pip3.9 install -I -t /root/usr/lib/python3.9/site-packages -r /root/Hyara/requirements.txt
+./Cutter-v2.0.3-x64.Linux.AppImage --pythonhome /root/usr
 ```
 
-copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to $cutter_plugin_dir/python/Hyara
+copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to /root/.local/share/rizin/cutter/plugins/python/Hyara
 
 Activate via Windows -> Plugins -> Hyara
 

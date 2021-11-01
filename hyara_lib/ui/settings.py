@@ -244,7 +244,7 @@ class HyaraGUI(MainGUI):
         self.result += "rule {} \n".format(self._variable_name.text())
         self.result += "{\n"
         self.result += "  meta:\n"
-        self.result += '      tool = "https://github.com/hy00un/Hyara"\n'
+        self.result += '      tool = "https://github.com/hyuunnn/Hyara"\n'
         self.result += '      version = "2.0"\n'
         self.result += '      date = "{}"\n'.format(time.strftime("%Y-%m-%d"))
         self.result += '      MD5 = "{}"\n'.format(self.get_md5())

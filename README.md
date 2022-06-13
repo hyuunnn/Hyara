@@ -52,14 +52,14 @@ pip install -r requirements.txt
 
 ### Cutter
 
-### Windows
+- Windows
 ```bash
 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python37\\python.exe -m pip install -I -t $cutter_dir/python37/site-packages -r requirements.txt
 ```
 
 copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to $cutter_dir/plugins/python/Hyara
 
-### Linux
+- Linux
 
 <img src="images/cutter_install__1.png" width="100%">
 

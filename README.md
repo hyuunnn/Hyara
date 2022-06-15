@@ -1,8 +1,8 @@
 # Hyara
 
-![Version](https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-2.2-blue.svg?cacheSeconds=2592000)
 
-<img src="images/Hyara.gif" width="100%">
+![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara.gif?raw=true)
 
 > Hyara is plugin that provides convenience when writing yararule.
 > 
@@ -20,11 +20,14 @@
 - If you double-click the table, you can clear the rule.
 - `Export Yara Rule`
   - Exports the previously created yara rules.
-<img src="images/Hyara_1.png" width="100%">
+
+![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara_1.png?raw=true)
+
 
 - `Right Click`
   - You can select either start address or end address. (IDA Pro, Cutter)
-<img src="images/Hyara_7.png" width="100%">
+
+![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara_7.png?raw=true)
   
 - `Comment Option`
   - Annotates the instructions next to the condition rule(s).
@@ -33,21 +36,22 @@
 - `String option`
   - This option extracts strings within the range specified.
 
-<img src="images/Hyara_3.png" width="100%">
-<img src="images/cutter_1.png" width="100%">
+![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara_3.png?raw=true)
+![](https://github.com/hyuunnn/Hyara/blob/master/images/cutter_1.png?raw=true)
 
 ## Installation
 
 ### IDA Pro & BinaryNinja
 
+- IDA Pro
 ```bash
 pip install -r requirements.txt
 ```
-- IDA Pro
   - copy ``Hyara_IDA.py and hyara_lib folder`` to $ida_dir/plugins
   - Activate via Edit -> Plugins -> Hyara (or CTRL+SHIFT+Y)
+
 - BinaryNinja
-  - copy ``Hyara_BinaryNinja.py and hyara_lib folder`` to BinaryNinja Plugin directory
+  - Just use the plugin manager!
   - Activate via View -> Show Hyara
 
 ### Cutter
@@ -61,7 +65,7 @@ copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to $cutter_dir/plugin
 
 - Linux
 
-<img src="images/cutter_install__1.png" width="100%">
+![](https://github.com/hyuunnn/Hyara/blob/master/images/cutter_install__1.png?raw=true)
 
 ```bash
 cp -r /tmp/.mount_Cutter5o3a5G/usr /root
@@ -73,7 +77,7 @@ copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to /root/.local/share
 
 Activate via Windows -> Plugins -> Hyara
 
-<img src="images/cutter__0.png" width="100%">
+![](https://github.com/hyuunnn/Hyara/blob/master/images/cutter__0.png?raw=true)
 
 ## Features
 
@@ -81,13 +85,13 @@ Activate via Windows -> Plugins -> Hyara
 - Supports BinaryNinja, Cutter, and IDA
 - YaraChecker
   - Tests the yararule on the fly
-  - <img src="images/Hyara_4.png" width="100%">
+  - ![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara_4.png?raw=true)
 - YaraDetector
   - Shows which part is detected in the sample loaded to disassembler, and when "Address" is clicked, it moves to the corresponding address on the disassembler view.
-  - <img src="images/Hyara_5.png" width="100%">
+  - ![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara_5.png?raw=true)
 - YaraIcon
   - Creates yara rules for icon resources embedded in the PE.
-  - <img src="images/Hyara_6.png" width="100%">
+  - ![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara_6.png?raw=true)
 
 ## Author
 

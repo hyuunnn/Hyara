@@ -5,7 +5,10 @@ if "idaapi" in modules:
     from PyQt5 import QtWidgets
 else:
     # We are running inside Cutter or Binary Ninja
-    import PySide2.QtWidgets as QtWidgets
+    try:
+        import PySide2.QtWidgets as QtWidgets
+    except:
+        import PySide6.QtWidgets as QtWidgets
 
 from abc import ABCMeta, abstractmethod
 from ..plugins import yara_checker, yara_detector, yara_icon

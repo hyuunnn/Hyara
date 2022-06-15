@@ -1,4 +1,4 @@
-from ..ui.settings import HyaraGUI
+from ...ui.settings import HyaraGUI
 import pefile
 import binascii
 

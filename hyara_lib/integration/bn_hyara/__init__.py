@@ -1,8 +1,8 @@
-from hyara_lib.integration.binaryninja_api import HyaraBinaryNinja
+from .binaryninja_api import HyaraBinaryNinja
 
-import PySide2.QtWidgets as QtWidgets
-from PySide2.QtCore import Qt
 from binaryninjaui import DockHandler, DockContextHandler, UIActionHandler
+import PySide6.QtWidgets as QtWidgets
+from PySide6.QtCore import Qt
 
 
 class HyaraDockWidget(QtWidgets.QWidget, DockContextHandler):

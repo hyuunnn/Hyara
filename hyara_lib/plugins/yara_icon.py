@@ -5,9 +5,14 @@ if "idaapi" in modules:
     from PyQt5 import QtWidgets, QtCore, QtGui
 else:
     # We are running inside Cutter or Binary Ninja
-    import PySide2.QtWidgets as QtWidgets
-    import PySide2.QtCore as QtCore
-    import PySide2.QtGui as QtGui
+    try:
+        import PySide2.QtWidgets as QtWidgets
+        import PySide2.QtCore as QtCore
+        import PySide2.QtGui as QtGui
+    except:
+        import PySide6.QtWidgets as QtWidgets
+        import PySide6.QtCore as QtCore
+        import PySide6.QtGui as QtGui
 
 from PIL import Image
 from PIL.ImageQt import ImageQt

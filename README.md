@@ -44,9 +44,9 @@
 ### IDA Pro & BinaryNinja
 
 - IDA Pro
-```bash
-pip install -r requirements.txt
-```
+  ```bash
+  pip install -r requirements.txt
+  ```
   - copy ``Hyara_IDA.py and hyara_lib folder`` to $ida_dir/plugins
   - Activate via Edit -> Plugins -> Hyara (or CTRL+SHIFT+Y)
 

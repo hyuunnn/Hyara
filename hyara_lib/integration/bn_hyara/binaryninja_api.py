@@ -66,7 +66,7 @@ class HyaraBinaryNinja(HyaraGUI):
 
     def get_rich_header(self) -> str:
         rich_header = pefile.PE(self.get_filepath()).parse_rich_header()
-        return Transform["RawHex"].encode(Transform["MD5"].encode(rich_header["clear_data"]))
+        return Transform["RawHex"].encode(Transform["MD5"].encode(rich_header["clear_data"])).decode()
 
     def get_pdb_path(self) -> str:
         # https://github.com/VirusTotal/yara/blob/master/docs/modules/pe.rst

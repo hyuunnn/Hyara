@@ -52,7 +52,7 @@
 
 - BinaryNinja
   - Just use the plugin manager!
-  - Activate via View -> Show Hyara
+  - Activate via View -> Other Docks -> Show Hyara
 
 ### Cutter
 

@@ -19,11 +19,10 @@ class HyaraCutter(HyaraGUI):
 
     def get_comment_hex(self, start_address, end_address) -> list:
         result = []
-        current_start = start_address
-        while current_start < end_address:
-            cutter_data = cutter.cmdj(f"i. @ {current_start}")
-            result.append(self.get_hex(current_start, cutter_data["next"]))
-            current_start = cutter_data["next"]
+        data = cutter.cmdj("pdj")
+        for i in data:
+            if i["offset"] >= start_address and i["offset"] < end_address:
+                result.append(i["bytes"])
         return result
 
     def get_string(self, start_address, end_address) -> list:

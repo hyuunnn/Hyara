@@ -74,8 +74,15 @@ copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to $cutter_dir/plugin
 
 ```bash
 cp -r /tmp/.mount_Cutter5o3a5G/usr /root
-pip3.9 install -I -t /root/usr/lib/python3.9/site-packages -r /root/Hyara/requirements.txt
-./Cutter-v2.1.0-x64.Linux.AppImage --pythonhome /root/usr
+```
+
+Check the python version installed in the cutter and install it.
+
+![](https://github.com/hyuunnn/Hyara/blob/master/images/cutter_01.png?raw=true)
+
+```bash
+pip3.X install -I -t /root/usr/lib/python3.X/site-packages -r /root/Hyara/requirements.txt
+./Cutter-v2.0.3-x64.Linux.AppImage --pythonhome /root/usr
 ```
 
 copy ``__init__.py, Hyara_Cutter.py and hyara_lib folder`` to /root/.local/share/rizin/cutter/plugins/python/Hyara

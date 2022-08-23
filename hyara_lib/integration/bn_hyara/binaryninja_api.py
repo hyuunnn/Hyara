@@ -27,6 +27,7 @@ class HyaraBinaryNinja(HyaraGUI):
     def bv(self):
         return binja_get_bv_from_dock()
 
+    # Bug: https://github.com/Vector35/binaryninja-api/issues/3279
     def get_disasm(self, start_address, end_address) -> list:
         result = []
         bv = self.bv
@@ -38,6 +39,7 @@ class HyaraBinaryNinja(HyaraGUI):
     def get_hex(self, start_address, end_address) -> str:
         return binascii.hexlify(self.bv.read(start_address, end_address - start_address)).decode()
 
+    # Bug: https://github.com/Vector35/binaryninja-api/issues/3279
     def get_comment_hex(self, start_address, end_address) -> list:
         result = []
         bv = self.bv

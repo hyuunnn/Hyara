@@ -58,9 +58,9 @@
 
 - Windows
 
-  Check the python version installed in the cutter and install it.
+Check the python version installed in the cutter and install it.
 
-  ![](https://github.com/hyuunnn/Hyara/blob/master/images/cutter_0.png?raw=true)
+![](https://github.com/hyuunnn/Hyara/blob/master/images/cutter_0.png?raw=true)
 
 ```bash
 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python3X\\python.exe -m pip install -I -t $cutter_dir/python3X/site-packages -r requirements.txt

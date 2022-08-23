@@ -28,14 +28,14 @@ class HyaraCutter(HyaraGUI):
 
     def get_string(self, start_address, end_address) -> list:
         result = []
-        data = cutter.cmdj("Csj")  # get single line strings : C*.@addr
+        data = cutter.cmdj("Cslj")  # get single line strings : C*.@addr
         for i in data:
             if i["offset"] >= start_address and i["offset"] <= end_address:
                 result.append(base64.b64decode(i["name"]).decode())
         return result
 
     def get_filepath(self) -> str:
-        return cutter.cmd("o.").strip()
+        return cutter.cmdj("ij")['core']['file']
 
     def get_md5(self) -> str:
         return cutter.cmdj("itj").get("md5", None)

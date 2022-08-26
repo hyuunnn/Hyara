@@ -29,7 +29,7 @@ class HyaraCutter(HyaraGUI):
         result = []
         data = cutter.cmdj("Cslj")  # get single line strings : C*.@addr
         for i in data:
-            if i["offset"] >= start_address and i["offset"] <= end_address:
+            if i["offset"] >= start_address and i["offset"] < end_address:
                 result.append(base64.b64decode(i["name"]).decode())
         return result
 

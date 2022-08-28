@@ -248,7 +248,7 @@ class HyaraGUI(MainGUI):
         self.result += "{\n"
         self.result += "  meta:\n"
         self.result += '      tool = "https://github.com/hyuunnn/Hyara"\n'
-        self.result += '      version = "2.1"\n'
+        self.result += '      version = "2.3"\n'
         self.result += '      date = "{}"\n'.format(time.strftime("%Y-%m-%d"))
         self.result += '      MD5 = "{}"\n'.format(self.get_md5())
         self.result += "  strings:\n"

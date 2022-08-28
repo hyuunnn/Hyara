@@ -19,7 +19,7 @@ class HyaraWidget(cutter.CutterDockWidget):
 class HyaraPlugin(cutter.CutterPlugin):
     name = "Hyara Plugin"
     description = "Hyara"
-    version = "2.1"
+    version = "2.3"
     author = "Hyun Yi @hyuunnn"
     hyaraWidget = None
 

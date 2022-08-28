@@ -1,6 +1,6 @@
 # Hyara
 
-![Version](https://img.shields.io/badge/version-2.2-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-2.3-blue.svg?cacheSeconds=2592000)
 
 ![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara.gif?raw=true)
 

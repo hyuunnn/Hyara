@@ -27,28 +27,26 @@ class HyaraBinaryNinja(HyaraGUI):
     def bv(self):
         return binja_get_bv_from_dock()
 
-    # Bug: https://github.com/Vector35/binaryninja-api/issues/3279
     def get_disasm(self, start_address, end_address) -> list:
         result = []
         bv = self.bv
-        bv.next_address = start_address
-        while bv.next_address < end_address:
-            result.append(bv.get_next_disassembly())
+        while start_address < end_address:
+            disas_text, length = next(bv.disassembly_text(start_address))
+            result.append(disas_text)
+            start_address += length
         return result
 
     def get_hex(self, start_address, end_address) -> str:
         return binascii.hexlify(self.bv.read(start_address, end_address - start_address)).decode()
 
-    # Bug: https://github.com/Vector35/binaryninja-api/issues/3279
     def get_comment_hex(self, start_address, end_address) -> list:
         result = []
         bv = self.bv
-        bv.next_address = start_address
-        while bv.next_address < end_address:
-            start = bv.next_address
-            bv.get_next_disassembly()
-            end = bv.next_address
-            result.append(self.get_hex(start, end))
+        while start_address < end_address:
+            disas_text, length = next(bv.disassembly_text(start_address))
+            end = start_address + length
+            result.append(self.get_hex(start_address, end))
+            start_address = end
         return result
 
     def get_string(self, start_address, end_address) -> list:

@@ -1,4 +1,9 @@
-from . import Hyara_Cutter
+try:
+    from . import Hyara_Cutter
+    cutter_found = True
+except ImportError:
+    cutter_found = False
 
-def create_cutter_plugin():
-    return Hyara_Cutter.HyaraPlugin()
+if cutter_found:
+    def create_cutter_plugin():
+        return Hyara_Cutter.HyaraPlugin()

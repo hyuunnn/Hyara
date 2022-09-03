@@ -18,7 +18,7 @@
 - After specifying the address, press the `Make` button to show the specified hexadecimal or strings as a result.
 - The results are saved in the table below when you click `Save`.
 - If you double-click the table, you can clear the rule.
-- You can modify values to wildcards by right clicking after dragging.
+- You can modify the values to wildcards by right clicking after dragging.
 
 ![](https://github.com/hyuunnn/Hyara/blob/master/images/wildcard.png?raw=true)
 

@@ -16,6 +16,31 @@ from ..plugins import yara_checker, yara_detector, yara_icon
 import time
 import pefile
 
+class WildcardPlainTextEdit(QtWidgets.QPlainTextEdit):
+    def __init__(self, parent=None):
+        QtWidgets.QPlainTextEdit.__init__(self, parent)
+
+    def contextMenuEvent(self, event):
+        menu = QtWidgets.QMenu(self)
+        wildcard_action = menu.addAction("Modify value to &wild-cards")
+        action = menu.exec_(self.mapToGlobal(event.pos()))
+
+        if action == wildcard_action:
+            self._wildcard_trigger()
+
+    def _wildcard_trigger(self):
+        result = ""
+        cursor = self.textCursor()
+        value = cursor.selectedText()
+
+        for i in value:
+            if ord(i) != ord(" "):
+                result += "?"
+            else:
+                result += " "
+
+        cursor.insertText(result)
+
 # Based GUI
 class MainGUI:
     def __init__(self):
@@ -41,7 +66,7 @@ class MainGUI:
         self._check_imphash = QtWidgets.QCheckBox()
         self._check_pdb_path = QtWidgets.QCheckBox()
 
-        self._result_plaintext = QtWidgets.QPlainTextEdit()
+        self._result_plaintext = WildcardPlainTextEdit()
 
         self._make_button = QtWidgets.QPushButton("Make")
         self._save_button = QtWidgets.QPushButton("Save")

@@ -20,7 +20,7 @@
 - If you double-click the table, you can clear the rule.
 - You can modify the values to wildcards by right clicking after dragging.
 
-![](https://github.com/hyuunnn/Hyara/blob/master/images/wildcard.png?raw=true)
+![](https://github.com/hyuunnn/Hyara/blob/master/images/wildcard_0.png?raw=true)
 
 - `Export Yara Rule`
   - Exports the previously created yara rules.

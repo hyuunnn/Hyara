@@ -22,7 +22,7 @@ class WildcardPlainTextEdit(QtWidgets.QPlainTextEdit):
 
     def contextMenuEvent(self, event):
         menu = QtWidgets.QMenu(self)
-        wildcard_action = menu.addAction("Modify values to &wild-cards")
+        wildcard_action = menu.addAction("Modify the values to &wild-cards")
         action = menu.exec_(self.mapToGlobal(event.pos()))
 
         if action == wildcard_action:

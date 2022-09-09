@@ -21,5 +21,3 @@ def run():
     window = HyaraWidget()
     window.show()
     app.exec_()
-
-run()

@@ -1,9 +1,9 @@
 from hyara_lib.integration.ghidra_api import HyaraGhidra
 import sys
 try:
-    import PyQt5.QtWidgets as QtWidgets
-except:
     import PySide2.QtWidgets as QtWidgets
+except:
+    import PySide6.QtWidgets as QtWidgets
 
 class HyaraWidget(QtWidgets.QWidget):
     def __init__(self):

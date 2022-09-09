@@ -97,7 +97,7 @@ Activate via Windows -> Plugins -> Hyara
 
 ### Ghidra (WIP)
 
-Install <a href="https://github.com/mandiant/Ghidrathon">Ghidrathon</a> (<a href="https://youtu.be/Aatbqf6lcjU">Installation Guide</a>) to use Hyara Plugin 
+Install <a href="https://github.com/mandiant/Ghidrathon">Ghidrathon</a> (<a href="https://youtu.be/Aatbqf6lcjU">Installation Guide</a>) to use Hyara Plugin.
 
 ```bash
 pip install PySide2 or pip install PySide6
@@ -119,9 +119,9 @@ Hyara_Ghidra.run()
 ## Features
 
 - GUI-based
-- Supports BinaryNinja, Cutter, and IDA
+- Supports IDA, BinaryNinja, Cutter and Ghidra.
 - YaraChecker
-  - Tests the yararule on the fly
+  - Tests the yararule on the fly.
   - ![](https://github.com/hyuunnn/Hyara/blob/master/images/Hyara_4.png?raw=true)
 - YaraDetector
   - Shows which part is detected in the sample loaded to disassembler, and when "Address" is clicked, it moves to the corresponding address on the disassembler view.

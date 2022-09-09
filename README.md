@@ -95,6 +95,27 @@ Activate via Windows -> Plugins -> Hyara
 
 ![](https://github.com/hyuunnn/Hyara/blob/master/images/cutter__0.png?raw=true)
 
+### Ghidra (WIP)
+
+Install <a href="https://github.com/mandiant/Ghidrathon">Ghidrathon</a> (<a href="https://youtu.be/Aatbqf6lcjU">Installation Guide</a>) to use Hyara Plugin 
+
+```bash
+pip install PySide2 or pip install PySide6
+```
+
+- Windows
+
+copy ``Hyara_Ghidra.py and hyara_lib folder`` to ``C:\\Users\\User\\.ghidra\\.ghidra.X.X.X\\Extensions\\Ghidrathon-X.X.X\\data\\python\\``
+
+```python
+# Window -> Ghidrathon
+import Hyara_Ghidra
+Hyara_Ghidra.run()
+```
+
+![](https://github.com/hyuunnn/Hyara/blob/master/images/ghidra_0.png?raw=true)
+
+
 ## Features
 
 - GUI-based

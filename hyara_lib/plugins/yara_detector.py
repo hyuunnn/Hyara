@@ -1,10 +1,13 @@
 from sys import modules
 
-if "idaapi" in modules:
-    # We are running inside IDA
+PYQT_ENABLE = False
+try:
     from PyQt5 import QtWidgets
-else:
-    # We are running inside Cutter or Binary Ninja
+    PYQT_ENABLE = True
+except:
+    pass    
+    
+if PYQT_ENABLE == False:
     try:
         import PySide2.QtWidgets as QtWidgets
     except:

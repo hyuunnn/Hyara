@@ -80,4 +80,4 @@ class HyaraGhidra(HyaraGUI):
         )
 
     def jump_to(self, addr):
-        return goTo(toAddr(addr))
+        goTo(toAddr(addr))

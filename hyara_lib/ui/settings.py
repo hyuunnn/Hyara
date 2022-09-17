@@ -240,14 +240,14 @@ class HyaraGUI(MainGUI):
             if self._check_string.isChecked():
                 self._result_plaintext.insertPlainText("\n".join(self.get_string(start, end)))
             else:
-                self._result_plaintext.insertPlainText("".join(self.get_hex(start, end)).upper().replace("\"", "\\\""))
+                self._result_plaintext.insertPlainText("".join(self.get_hex(start, end)).upper())
 
     def _save_rule(self):
         if self._check_string.isChecked():
             string_list = self._result_plaintext.toPlainText().split("\n")
             for idx, string in enumerate(string_list):
                 self.rule_list["{}_{}".format(self._variable_name.text(), str(idx))] = {
-                    "text": string,
+                    "text": string.replace("\"", "\\\""),
                     "start": self._start_address.text(),
                     "end": self._end_address.text(),
                     "type": "string",

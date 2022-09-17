@@ -240,7 +240,7 @@ class HyaraGUI(MainGUI):
             if self._check_string.isChecked():
                 self._result_plaintext.insertPlainText("\n".join(self.get_string(start, end)))
             else:
-                self._result_plaintext.insertPlainText("".join(self.get_hex(start, end)).upper())
+                self._result_plaintext.insertPlainText("".join(self.get_hex(start, end)).upper().reaplce("\"", "\\\""))
 
     def _save_rule(self):
         if self._check_string.isChecked():

@@ -10,6 +10,8 @@
 
 - [Demo video](https://youtu.be/zgL4BkQJZ-w)
 
+- [IDA Plugin Contest 2018](https://hex-rays.com/contests_details/contest2018/)
+
 ## Instructions
 
 ### Start Screen and Options

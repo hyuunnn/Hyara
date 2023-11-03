@@ -93,15 +93,16 @@ class YaraDetector(QtWidgets.QDialog):
 
         matches = self.rule.match(data=data)
         for match in matches:
-            for i in match.strings:
-                result.append(
-                    {
-                        "addr": hex(i[0]),
-                        "rule_name": match.rule,
-                        "variable_name": i[1],
-                        "value": i[2].hex(),
-                    }
-                )
+            for strings in match.strings:
+                for instance in strings.instances:
+                    result.append(
+                        {
+                            "addr": hex(instance.offset),
+                            "rule_name": match.rule,
+                            "variable_name": strings.identifier,
+                            "value": instance.matched_data.hex(),
+                        }
+                    )
         self._table.setRowCount(len(result))
 
         for idx, value in enumerate(result):

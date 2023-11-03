@@ -74,12 +74,14 @@ class YaraChecker(QtWidgets.QDialog):
                     matches = rule.match(data=f.read())
                     for match in matches:
                         strings = match.strings[0]
-                        result[filename] = {
-                            "path": self._folder_path.text(),
-                            "addr": hex(strings[0]),
-                            "rule_name": strings[1],
-                            "value": strings[2].hex(),
-                        }
+
+                        for instance in strings.instances:
+                            result[filename] = {
+                                "path": self._folder_path.text(),
+                                "addr": hex(instance.offset),
+                                "rule_name": strings.identifier,
+                                "value": instance.matched_data.hex(),
+                            }
             except IOError:  # Permission denied
                 continue
 

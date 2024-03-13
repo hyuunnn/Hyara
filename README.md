@@ -149,3 +149,5 @@ Hyara_Ghidra.run()
 
 * <a href="https://twitter.com/cyb3rops/status/1024208220989140992">Florian Roth's Twitter</a>
 * <a href="https://danielplohmann.github.io/blog/2024/03/08/malpediaflossed.html">MalpediaFLOSSed</a> - <a href="https://twitter.com/push_pnx/status/1766045950173200513">Twitter</a>
+* <a href="https://cocacoding.com/papers/Automatic_Generation_of_code_based_YARA_Signatures.pdf">Automatic Generation of code-based YARA-Signatures</a>
+* <a href="https://www.cocacoding.com/papers/Improving_YARA-Signator_for_effective_Generation_of_code-based_YARA-Signatures.pdf">Improving YARA-Signator for effective Generation of code-based YARA-Signatures</a>

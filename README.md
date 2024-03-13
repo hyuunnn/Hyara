@@ -144,3 +144,8 @@ Hyara_Ghidra.run()
 * Github: <a href="https://github.com/gaasedelen">gaasedelen</a> - <a href="https://github.com/hyuunnn/Hyara/blob/master/hyara_lib/integration/bn_hyara/binaryninja_api.py#L9">Link</a>
 * Github: <a href="https://github.com/ITAYC0HEN">ITAYC0HEN</a> - <a href="https://github.com/hyuunnn/Hyara/pull/14">Link</a>
 * Github: <a href="https://github.com/psifertex">psifertex</a> - <a href="https://github.com/hyuunnn/Hyara/pull/18">Link</a>
+
+## Link
+
+* <a href="https://twitter.com/cyb3rops/status/1024208220989140992">Florian Roth's Twitter</a>
+* <a href="https://danielplohmann.github.io/blog/2024/03/08/malpediaflossed.html">MalpediaFLOSSed</a> - <a href="https://twitter.com/push_pnx/status/1766045950173200513">Twitter</a>

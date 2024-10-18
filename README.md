@@ -12,6 +12,8 @@
 
 - [IDA Plugin Contest 2018](https://hex-rays.com/contests_details/contest2018/#Hyara)
 
+- [Hyara - Generator for YARA Rules (KOR)](https://github.com/hyuunnn/slides/blob/main/Hyara%20-%20Generator%20for%20YARA%20Rules.pdf) - 2018. 09. 16
+
 ## Instructions
 
 ### Start Screen and Options

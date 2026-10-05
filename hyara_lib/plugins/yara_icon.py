@@ -1,18 +1,6 @@
-from sys import modules
+from ..ui.qt_compat import import_qt
 
-if "idaapi" in modules:
-    # We are running inside IDA
-    from PyQt5 import QtWidgets, QtCore, QtGui
-else:
-    # We are running inside Cutter, Binary Ninja or Ghidra
-    try:
-        import PySide2.QtWidgets as QtWidgets
-        import PySide2.QtCore as QtCore
-        import PySide2.QtGui as QtGui
-    except:
-        import PySide6.QtWidgets as QtWidgets
-        import PySide6.QtCore as QtCore
-        import PySide6.QtGui as QtGui
+QtWidgets, QtCore, QtGui = import_qt()
 
 from PIL import Image
 from PIL.ImageQt import ImageQt

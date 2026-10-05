@@ -1,92 +1,64 @@
-from hyara_lib.integration.ida_api import HyaraIDA
+import logging
+import os
+
 import ida_kernwin
-import idaapi
+
+logger = logging.getLogger(__name__)
 
 
-class Hyara_action_handler_t(idaapi.action_handler_t):
-    def __init__(self, widget):
-        idaapi.action_handler_t.__init__(self)
-        self.widget = widget
+def should_load() -> bool:
+    """Return True when IDA 9.2+ is running interactively."""
+    if not ida_kernwin.is_idaq():
+        return False
 
-    def activate(self, ctx):
-        self.widget.setText(hex(idaapi.get_screen_ea()))
-        return 1
+    if os.environ.get("IDA_IS_INTERACTIVE") != "1":
+        return False
 
-    def update(self, ctx):
-        return idaapi.AST_ENABLE_ALWAYS
+    kernel_version: tuple[int, ...] = tuple(
+        int(part)
+        for part in ida_kernwin.get_kernel_version().split(".")
+        if part.isdigit()
+    ) or (0,)
+    if kernel_version < (9, 2):
+        logger.warning("IDA too old (must be 9.2+): %s", ida_kernwin.get_kernel_version())
+        return False
 
-
-class Hooks(ida_kernwin.UI_Hooks):
-    def __init__(self):
-        ida_kernwin.UI_Hooks.__init__(self)
-
-    def finish_populating_widget_popup(self, widget, popup):
-        ida_kernwin.attach_action_to_popup(widget, popup, "Hyara:select_start_address", None)
-        ida_kernwin.attach_action_to_popup(widget, popup, "Hyara:select_end_address", None)
+    return True
 
 
-class HyaraWidget(ida_kernwin.PluginForm):
-    def OnCreate(self, form):
-        self.parent = self.FormToPyQtWidget(form)
-        self.HyaraIDA = HyaraIDA()
-        self.parent.setLayout(self.HyaraIDA.layout)
-
-        idaapi.register_action(
-            ida_kernwin.action_desc_t(
-                "Hyara:select_start_address",
-                "Hyara - Select Start Address",
-                Hyara_action_handler_t(self.HyaraIDA._start_address),
-                "Ctrl+Shift+S",
-                "Hyara - Select Start Address",
-            )
-        ),
-
-        idaapi.register_action(
-            ida_kernwin.action_desc_t(
-                "Hyara:select_end_address",
-                "Hyara - Select End Address",
-                Hyara_action_handler_t(self.HyaraIDA._end_address),
-                "Ctrl+Shift+E",
-                "Hyara - Select End Address",
-            )
-        ),
-
-    def OnClose(self, form):
-        idaapi.unregister_action("Hyara:select_start_address")
-        idaapi.unregister_action("Hyara:select_end_address")
-        hooks.unhook()
+_load_plugin = False
+if should_load():
+    try:
+        from hyara_ida.plugin import hyara_plugin_t
+    except Exception:
+        logger.exception("failed to load Hyara")
+        ida_kernwin.warning(
+            "Hyara failed to load. Install ida-domain, yara-python, pefile, and Pillow into IDA's Python environment."
+        )
+    else:
+        _load_plugin = True
 
 
-class HyaraPlugin(idaapi.plugin_t):
-    # https://www.hex-rays.com/products/ida/support/sdkdoc/group___p_l_u_g_i_n__.html
-    flags = idaapi.PLUGIN_UNL
-    comment = "Hyara"
-    help = "help"
-    wanted_name = "Hyara"
-    wanted_hotkey = "Ctrl+Shift+Y"
+if _load_plugin:
 
-    def init(self):
-        global hooks
-        idaapi.msg("[*] Hyara Plugin\n")
-        hooks = Hooks()
-        hooks.hook()
-        return idaapi.PLUGIN_OK
+    def PLUGIN_ENTRY():
+        return hyara_plugin_t()
 
-    def run(self, arg):
-        plg = HyaraWidget()
-        plg.Show("Hyara")
+else:
+    try:
+        import ida_idaapi
+    except ImportError:
+        import idaapi as ida_idaapi
 
-        try:
-            widget_a = ida_kernwin.find_widget("IDA View-A")
-            widget_Hyara = ida_kernwin.find_widget("Hyara")
-            if widget_Hyara and widget_a:
-                ida_kernwin.set_dock_pos("Hyara", "IDA View-A", ida_kernwin.DP_RIGHT)
-        except:
-            print("find_widget option is available version 7.0 or later")
+    class hyara_nop_plugin_t(ida_idaapi.plugin_t):
+        flags = ida_idaapi.PLUGIN_HIDE | ida_idaapi.PLUGIN_UNL
+        wanted_name = "Hyara disabled"
+        comment = "Hyara is disabled for this IDA version"
+        help = ""
+        wanted_hotkey = ""
 
-    def term(self):
-        pass
+        def init(self):
+            return ida_idaapi.PLUGIN_SKIP
 
-
-def PLUGIN_ENTRY():
-    return HyaraPlugin()
+    def PLUGIN_ENTRY():
+        return hyara_nop_plugin_t()

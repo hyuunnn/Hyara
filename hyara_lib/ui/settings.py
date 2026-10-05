@@ -1,14 +1,6 @@
-from sys import modules
+from .qt_compat import import_qt
 
-if "idaapi" in modules:
-    # We are running inside IDA
-    from PyQt5 import QtWidgets
-else:
-    # We are running inside Cutter, Binary Ninja or Ghidra
-    try:
-        import PySide2.QtWidgets as QtWidgets
-    except:
-        import PySide6.QtWidgets as QtWidgets
+QtWidgets, _, _ = import_qt()
 
 from abc import ABCMeta, abstractmethod
 from ..plugins import yara_checker, yara_detector, yara_icon

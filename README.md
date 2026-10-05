@@ -51,12 +51,10 @@
 
 ### IDA Pro & BinaryNinja
 
-- IDA Pro
-  ```bash
-  pip install -r requirements.txt
-  ```
-  - copy ``Hyara_IDA.py and hyara_lib folder`` to $ida_dir/plugins
-  - Activate via Edit -> Plugins -> Hyara (or CTRL+SHIFT+Y)
+- IDA Pro 9.2+
+  - Plugin Manager: `ida-plugin.json` at the repository root declares entry point `Hyara_IDA.py`. After a GitHub release is indexed, install it from the Plugin Manager.
+  - Manual copy: `ida-plugin.json`, `Hyara_IDA.py`, `hyara_ida/`, and `hyara_lib/` into `$IDAUSR/plugins`. Install `ida-domain`, `yara-python`, `pefile`, and `Pillow` with IDA's Python. Cutter and the other hosts still use `requirements.txt`.
+  - Activate via Edit -> Plugins -> Hyara, View -> Open subviews -> Hyara, or Ctrl+Shift+Y. Right-click a disassembly or hex view to set the start or end address.
 
 - BinaryNinja
   - Just use the plugin manager!

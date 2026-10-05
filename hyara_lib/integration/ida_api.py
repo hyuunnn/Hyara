@@ -1,61 +1,83 @@
-from ..ui.settings import HyaraGUI
+import hashlib
+import logging
 
-import ida_ida
 import ida_bytes
 import ida_nalt
-import idautils
-import idc
-import binascii
 import pefile
-import hashlib
+from ida_domain import Database
+
+from ..ui.settings import HyaraGUI
+
+logger = logging.getLogger(__name__)
 
 
 class HyaraIDA(HyaraGUI):
     def __init__(self):
-        super(HyaraIDA, self).__init__()
+        super().__init__()
+        # GUI mode: handle to the database already open in IDA. Do not close it.
+        self._db = Database.open()
+
+    def set_start_address(self, text: str) -> None:
+        self._start_address.setText(text)
+
+    def set_end_address(self, text: str) -> None:
+        self._end_address.setText(text)
+
+    def _iter_heads(self, start_address: int, end_address: int):
+        ea = start_address
+        while ea < end_address:
+            nxt = self._db.heads.get_next(ea)
+            yield ea, nxt
+            if nxt is None or nxt <= ea:
+                break
+            ea = nxt
 
     def get_disasm(self, start_address, end_address) -> list:
-        result = []
-        current_start = start_address
-        while current_start < end_address:
-            # https://github.com/idapython/src/blob/master/python/idautils.py#L202
-            result.append(idc.GetDisasm(current_start))
-            current_start = ida_bytes.next_head(current_start, ida_ida.cvar.inf.max_ea)
-        return result
+        if start_address >= end_address:
+            return []
+        return [
+            self._db.bytes.get_disassembly_at(ea) or ""
+            for ea, _nxt in self._iter_heads(start_address, end_address)
+        ]
 
     def get_hex(self, start_address, end_address) -> str:
         length = end_address - start_address
-        return binascii.hexlify(ida_bytes.get_bytes(start_address, length)).decode()
+        if length <= 0:
+            return ""
+        data = self._db.bytes.get_bytes_at(start_address, length)
+        if not data:
+            logger.warning("failed to read %s bytes at %s", length, hex(start_address))
+            return ""
+        return data.hex()
 
     def get_comment_hex(self, start_address, end_address) -> list:
+        if start_address >= end_address:
+            return []
         result = []
-        current_start = start_address
-        while current_start < end_address:
-            # https://github.com/idapython/src/blob/master/python/idautils.py#L202
-            next_start = ida_bytes.next_head(current_start, ida_ida.cvar.inf.max_ea)
-            result.append(self.get_hex(current_start, next_start))
-            current_start = next_start
+        for ea, nxt in self._iter_heads(start_address, end_address):
+            item_end = end_address if nxt is None else nxt
+            result.append(self.get_hex(ea, item_end))
         return result
 
     def get_string(self, start_address, end_address) -> list:
+        if start_address >= end_address:
+            return []
+
         result = []
-        current_start = start_address
-        while current_start < end_address:
-            if ida_nalt.get_str_type(current_start) < 4294967295:
-                result.append(
-                    ida_bytes.get_strlit_contents(
-                        current_start, -1, ida_nalt.get_str_type(current_start)
-                    ).decode()
-                )
-            # https://github.com/idapython/src/blob/master/python/idautils.py#L202
-            current_start = ida_bytes.next_head(current_start, ida_ida.cvar.inf.max_ea)
+        for ea, _nxt in self._iter_heads(start_address, end_address):
+            strtype = ida_nalt.get_str_type(ea)
+            if strtype >= 0xFFFFFFFF:
+                continue
+            contents = ida_bytes.get_strlit_contents(ea, -1, strtype)
+            if contents:
+                result.append(contents.decode())
         return result
 
     def get_filepath(self) -> str:
-        return ida_nalt.get_input_file_path()
+        return self._db.path or ""
 
     def get_md5(self) -> str:
-        return idautils.GetInputFileMD5().hex()
+        return self._db.md5 or ""
 
     def get_imphash(self) -> str:
         return pefile.PE(self.get_filepath()).get_imphash()
@@ -77,4 +99,4 @@ class HyaraIDA(HyaraGUI):
         )
 
     def jump_to(self, addr):
-        idc.jumpto(addr)
+        self._db.current_ea = int(addr)

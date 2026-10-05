@@ -1,0 +1,44 @@
+{
+  "$schema": "https://hcli.docs.hex-rays.com/schemas/ida-plugin.json",
+  "IDAMetadataDescriptorVersion": 1,
+  "plugin": {
+    "name": "hyara",
+    "entryPoint": "Hyara_IDA.py",
+    "version": "2.3.0",
+    "idaVersions": ["9.2", "9.3", "9.4", "9.5", "10.0"],
+    "platforms": [
+      "windows-x86_64",
+      "windows-aarch64",
+      "linux-x86_64",
+      "linux-aarch64",
+      "macos-x86_64",
+      "macos-aarch64"
+    ],
+    "description": "Write YARA rules from a selected address range in IDA Pro.",
+    "license": "MIT",
+    "categories": [
+      "malware-analysis",
+      "ui-ux-and-visualization"
+    ],
+    "keywords": [
+      "yara",
+      "rule",
+      "malware"
+    ],
+    "pythonDependencies": [
+      "ida-domain>=0.5.1",
+      "yara-python>=4.3.1",
+      "pefile>=2023.2.7",
+      "Pillow>=8.3.2"
+    ],
+    "urls": {
+      "repository": "https://github.com/hyuunnn/Hyara"
+    },
+    "authors": [
+      {
+        "name": "Hyun Yi",
+        "email": "hy00un__@naver.com"
+      }
+    ]
+  }
+}
